@@ -109,3 +109,20 @@ test('approve-plan recusa plano não publicável', () => {
   const r = spawnSync('node', [`${S}/approve-plan.mjs`, join(dir, 'publish_plan.json'), '--by', 'PO'], { encoding: 'utf8' });
   assert.equal(r.status, 3);
 });
+
+test('handoff Designer: dry-run não escreve; apply cria linha + spec e é idempotente', async () => {
+  const { handoff, slug } = await import(`../${S}/handoff-designer.mjs`);
+  const { existsSync, mkdirSync } = await import('node:fs');
+  const root = mkdtempSync(join(tmpdir(), 'dsg-')); mkdirSync(join(root, 'docs/sdd'), { recursive: true });
+  writeFileSync(join(root, 'docs/sdd/DOMAINS.md'), '| Domínio | Nome |\n|---|---|\n| `busca-cliente` | Busca |\n');
+  writeFileSync(join(root, 'docs/sdd/BACKLOG.md'), '# B\n\n## `busca-cliente/`\n\n| ID | Capacidade | Persona | Depende de | Status |\n|---|---|---|---|---|\n| 001 | X | Y | — | não iniciado |\n');
+  const b = JSON.parse(JSON.stringify(approvedBl)); b.epics[0].stories[0].ready_for_design = true; b.epics[0].stories[0].open_questions = [{ id: 'Q-009', text: 'Mascarar o documento em quais telas?', kind: 'negocio', evidence: ['S01:L2'] }];
+  const d = handoff(b, root); assert.equal(d.created.length, 1);
+  assert.ok(!readFileSync(join(root, 'docs/sdd/BACKLOG.md'), 'utf8').includes('Localizar cliente'));
+  handoff(b, root, { apply: true });
+  assert.match(readFileSync(join(root, 'docs/sdd/BACKLOG.md'), 'utf8'), /\| 002 \| Localizar cliente por documento/);
+  assert.ok(existsSync(join(root, 'specs/busca-cliente/002-localizar-cliente-por-documento/spec.md')));
+  assert.match(readFileSync(join(root, 'specs/busca-cliente/002-localizar-cliente-por-documento/spec.md'), 'utf8'), /NEEDS CLARIFICATION: negócio/);
+  assert.equal(handoff(b, root, { apply: true }).created.length, 0);
+  assert.equal(slug('Ação Rápida!'), 'acao-rapida');
+});
