@@ -1,6 +1,6 @@
 ---
 name: sf-backlog-publish
-description: Publica no Jira (Atlassian Rovo MCP) o backlog aprovado da skill sf-discover — gera o plano (criar/atualizar/ignorar), mostra o diff à PO, e só depois da aprovação explícita escreve no Jira. Use quando a PO pedir para publicar, atualizar ou editar histórias no Jira a partir de discovery/<rodada>/backlog.json.
+description: Publica no Jira (MCP do Jira) o backlog aprovado da skill sf-discover — gera o plano (criar/atualizar/ignorar), mostra o diff à PO, e só depois da aprovação explícita escreve no Jira. Use quando a PO pedir para publicar, atualizar ou editar histórias no Jira a partir de discovery/<rodada>/backlog.json.
 disable-model-invocation: true
 argument-hint: <round-id>
 arguments: [round]

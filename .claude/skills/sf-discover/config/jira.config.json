@@ -2,6 +2,8 @@
   "$comment": "Configuração do Jira. PROVISÓRIA: nenhum valor abaixo foi definido pela equipe. Enquanto templates_status for 'provisorio', a skill NÃO publica no Jira (gera o pacote de importação).",
   "templates_status": "provisorio",
   "project_key": null,
+  "mcp_server_pattern": null,
+  "$comment_mcp": "Regex (opcional) do nome do servidor MCP do Jira, caso o nome real não contenha atlassian/jira. Ex.: \"^mcp__meu-servidor__\"",
   "issue_types": { "epic": "Epic", "story": "Story", "subtask": "Sub-task" },
   "discovery_id_field": { "mode": "label", "name": "discovery-id", "$comment": "label (padrão) ou o id de um campo customizado, quando existir" },
   "labels": ["discovery"],

@@ -1,6 +1,6 @@
 # Salesforce Discovery-to-Backlog
 
-Skill do Claude Code que transforma as rodadas de discovery da PO (transcrições, resumos, requisitos estruturados ou semi-estruturados) em **backlog rastreável** para o atendimento de produtos financeiros no Salesforce Service Cloud, com publicação controlada no **Jira** (Atlassian Rovo MCP). Alimenta o **Journey Designer**.
+Skill do Claude Code que transforma as rodadas de discovery da PO (transcrições, resumos, requisitos estruturados ou semi-estruturados) em **backlog rastreável** para o atendimento de produtos financeiros no Salesforce Service Cloud, com publicação controlada no **Jira** (MCP do Jira). Alimenta o **Journey Designer**.
 
 Base: [elephant-goldfish-model](https://github.com/google/elephant-goldfish-model) (cópia literal em `.claude/skills/egm/`, Apache-2.0, ver `NOTICE.md`).
 
@@ -22,7 +22,7 @@ Base: [elephant-goldfish-model](https://github.com/google/elephant-goldfish-mode
 - **LGPD**: CPF/CNPJ/e-mail/telefone formatados são mascarados na entrada; falantes pseudonimizados; `discovery/` fora do git.
 
 ## O que NÃO foi verificado aqui
-Ferramentas reais do Rovo, templates/campos reais do Jira, sessão real com a PO e execução ao vivo dos revisores. Ver `docs/open-decisions.md`.
+Nome do servidor e das ferramentas reais do MCP do Jira, templates/campos reais do Jira, sessão real com a PO e execução ao vivo dos revisores. Ver `docs/open-decisions.md`.
 
 ## Testes
 `node scripts/verify-skills.mjs && node --test tests/core.test.mjs tests/jira.test.mjs`

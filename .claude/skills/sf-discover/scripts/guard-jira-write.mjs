@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Hook PreToolUse para ferramentas do Atlassian/Jira. Barreira no momento da chamada (não depende de a skill "lembrar"):
+// Hook PreToolUse para ferramentas do MCP do Jira. Barreira no momento da chamada (não depende de a skill "lembrar"):
 //  • leitura (get/search/lookup/list/...)  → permite
 //  • exclusão, transição de status, qualquer escrita no Confluence → NEGA sempre
 //  • escrita no Jira (create/edit/update/add/link/comment/...) → só com publish_plan.approved.json cujo hash bate com publish_plan.json,
@@ -12,6 +12,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { hashOf, norm } from './lib/util.mjs';
 import { planBody } from './approve-plan.mjs';
+import { loadConfig } from './lib/config.mjs';
 
 const READ = /(^|[^a-z])(get|search|lookup|fetch|list|read|find|query|describe|resolve|visible|metadata|fields|jql|whoami|user)/i;
 const DENY_ALWAYS = /(delete|remove|archive|purge|destroy|transition|move)/i;
@@ -48,7 +49,9 @@ function findApproved(cwd) {
 
 export function decide(toolName, input, cwd = process.cwd()) {
   const t = String(toolName).toLowerCase();
-  if (!/atlassian|jira|confluence/.test(t)) return { allow: true };
+  let extra = null;
+  try { const p = loadConfig().cfg.mcp_server_pattern; if (p) extra = new RegExp(p, 'i'); } catch { /* padrão inválido: usa só o detector padrão */ }
+  if (!/atlassian|jira|confluence/.test(t) && !(extra && extra.test(t))) return { allow: true };
   const kind = classify(toolName);
   if (kind === 'read') return { allow: true };
   if (kind === 'deny') return { allow: false, reason: 'Exclusão/transição de status no Jira não é feita por esta skill. Faça manualmente, fora do Claude Code, se for realmente necessário.' };

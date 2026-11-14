@@ -126,3 +126,14 @@ test('handoff Designer: dry-run não escreve; apply cria linha + spec e é idemp
   assert.equal(handoff(b, root, { apply: true }).created.length, 0);
   assert.equal(slug('Ação Rápida!'), 'acao-rapida');
 });
+
+test('hook: mcp_server_pattern cobre servidor do Jira com nome customizado', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sfd-'));
+  const c = JSON.parse(readFileSync(`${S}/../config/jira.config.json`, 'utf8')); c.mcp_server_pattern = '^mcp__tracker__';
+  writeFileSync(join(dir, 'c.json'), JSON.stringify(c));
+  process.env.SFD_CONFIG = join(dir, 'c.json');
+  try {
+    assert.equal(decide('mcp__tracker__delete_item', {}, dir).allow, false);
+    assert.equal(decide('mcp__outro__delete_item', {}, dir).allow, true);
+  } finally { delete process.env.SFD_CONFIG; }
+});

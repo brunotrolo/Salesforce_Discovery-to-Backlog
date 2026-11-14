@@ -2,7 +2,7 @@
 paths: discovery/**, .claude/skills/sf-discover/config/**
 ---
 
-# Escrita no Jira (Atlassian Rovo MCP)
+# Escrita no Jira (MCP do Jira)
 
 - Leitura (buscar/ler/metadados) é livre. Escrita (criar, editar, comentar, vincular) só com plano aprovado cujo hash bate com `publish_plan.json`.
 - O hook `guard-jira-write.mjs` nega: exclusão, transição, escrita fora do projeto de `jira.config.json`, escrita sem plano aprovado, e qualquer chamada
