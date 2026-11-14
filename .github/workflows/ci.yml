@@ -9,4 +9,4 @@ jobs:
         with: { node-version: 20 }
       - run: pip install python-docx python-pptx
       - run: node scripts/verify-skills.mjs
-      - run: node --test tests/core.test.mjs tests/jira.test.mjs
+      - run: node --test tests/*.test.mjs
