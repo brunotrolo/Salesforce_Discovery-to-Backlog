@@ -1,0 +1,10 @@
+{
+  "title": "Busca por documento no console", "purpose": "Validar como o atendente localiza o cliente e vê seus produtos.",
+  "stories": ["US-001"],
+  "brief": { "change_kind": "nova-jornada", "insertion": "nova-aba-n2", "fidelity": "fluxo-3-5-telas", "scenarios": "feliz-e-erro", "audience": "validacao-negocio" },
+  "assumptions": ["Q-001: quais produtos entram na primeira entrega? (a definir com o negócio)"],
+  "walkthrough": [
+    { "id": "inicio", "title": "Tela inicial do console", "text": "Ponto de partida do atendente.", "run": [] },
+    { "id": "busca", "title": "Buscar por documento", "text": "Abra a aba 'Busca por documento' e clique em Buscar.", "covers": ["US-001#1"], "run": [["buscarCliente"], ["selProduto"], ["avancar"], ["t2", "bscDoc"], ["bscBuscar"]] }
+  ]
+}

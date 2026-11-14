@@ -41,7 +41,8 @@ def shots(dirpath, p):
     """PNGs do protótipo, na ordem das telas (nome = id da tela)."""
     if not dirpath or not p:
         return []
-    return [(s["title"], os.path.join(dirpath, s["id"] + ".png")) for s in p["screens"] if os.path.exists(os.path.join(dirpath, s["id"] + ".png"))]
+    steps = p.get("screens") or p.get("walkthrough") or []
+    return [(s["title"], os.path.join(dirpath, s["id"] + ".png")) for s in steps if os.path.exists(os.path.join(dirpath, s["id"] + ".png"))]
 
 
 # ---------------------------------------------------------------- Word

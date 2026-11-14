@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Protótipo — Console de Atendimento (template)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:12px;background:#f3f2f2;color:#3e3e3c}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:#f3f2f2}::-webkit-scrollbar-thumb{background:#dddbda;border-radius:3px}
+.app{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topnav{background:white;border-bottom:1px solid #dddbda;padding:5px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sf-logo{width:26px;height:26px;background:#0070d2;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:900}
+.nav-appname{font-weight:600;font-size:13px;color:#3e3e3c}
+.nav-inicio{display:flex;align-items:center;gap:3px;padding:2px 7px;font-size:12px;color:#3e3e3c;border:1px solid #dddbda;border-radius:4px}
+.topnav-search{flex:1;max-width:380px;background:#f3f2f2;border:1px solid #dddbda;border-radius:4px;padding:4px 10px;color:#706e6b;font-size:11px;margin:0 14px}
+.nav-icons{display:flex;align-items:center;gap:10px;color:#706e6b;margin-left:auto;font-size:12px}
+.avatar{width:26px;height:26px;border-radius:50%;background:#0070d2;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold}
+.rectab{background:white;border-bottom:1px solid #dddbda;padding:0 12px;display:flex;align-items:center;flex-shrink:0}
+.rectab-item{padding:5px 10px;font-size:12px;color:#3e3e3c;display:flex;align-items:center;gap:4px;background:#f3f2f2;border:1px solid #dddbda;border-bottom:none;border-radius:4px 4px 0 0;margin-bottom:-1px}
+.home-body{flex:1;overflow-y:auto;background:#f3f2f2;padding:12px}
+.home-panel{background:white;border:1px solid #dddbda;border-radius:4px;overflow:hidden}
+.busca-section{padding:14px;border-bottom:1px solid #dddbda}
+.busca-title{font-size:13px;font-weight:600;color:#3e3e3c;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.tipo-label{font-size:11px;color:#706e6b;margin-bottom:5px}
+.tipo-btns{display:flex;gap:4px;margin-bottom:12px}
+.tipo-btn{padding:4px 10px;font-size:11px;border:1px solid #dddbda;border-radius:3px;cursor:pointer;background:white;color:#3e3e3c}
+.tipo-btn.act{background:#0070d2;color:white;border-color:#0070d2}
+.cpf-label{font-size:11px;color:#706e6b;margin-bottom:4px}
+.cpf-input{width:220px;border:1px solid #0070d2;border-radius:3px;padding:6px 8px;font-size:12px;margin-bottom:10px;display:block}
+.buscar-btn{background:#04844b;color:white;border:none;border-radius:3px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer}
+.buscar-btn:hover{background:#037340}
+.pub-section{padding:14px}
+.pub-title{font-size:13px;font-weight:600;color:#3e3e3c;margin-bottom:10px}
+.pub-select{border:1px solid #dddbda;border-radius:3px;padding:4px 8px;font-size:12px;min-width:200px;margin-bottom:10px}
+.pub-table{width:100%;border-collapse:collapse;font-size:11px}
+.pub-table th{text-align:left;padding:6px 8px;color:#706e6b;font-weight:600;border-bottom:1px solid #dddbda}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal-card{background:white;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.15);padding:24px;min-width:600px;max-width:700px;position:relative}
+.modal-lg{min-width:700px}
+.modal-close{position:absolute;top:12px;right:16px;font-size:18px;color:#706e6b;cursor:pointer}
+.modal-title{font-size:14px;font-weight:600;color:#3e3e3c;margin-bottom:16px}
+.modal-title-center{font-size:14px;font-weight:600;color:#3e3e3c;margin-bottom:16px;text-align:center}
+.modal-produtos{display:flex;gap:16px;margin-bottom:20px}
+.prod-card{flex:1;border:1px solid #dddbda;border-radius:6px;padding:16px}
+.prod-card.pf{cursor:default}
+.prod-title{font-size:12px;font-weight:600;color:#3e3e3c;margin-bottom:12px}
+.prod-icons{display:flex;gap:16px;justify-content:center}
+.prod-icon-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;border-radius:6px}
+.prod-icon-btn:hover{background:#f0f4ff}
+.prod-icon-box{width:44px;height:44px;background:#eaf5fe;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.prod-icon-label{font-size:10px;color:#3e3e3c;text-align:center}
+.prod-pj-msg{font-size:11px;color:#c23934;font-style:italic;text-align:center;padding-top:16px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid #dddbda}
+.modal-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px}
+.modal-tbl th{text-align:left;padding:8px 12px;color:#706e6b;font-weight:600;background:#f3f2f2;border-bottom:1px solid #dddbda}
+.modal-tbl td{padding:8px 12px;border-bottom:1px solid #f3f2f2}
+.modal-tbl tr.cl{cursor:pointer}.modal-tbl tr.cl:hover{background:#f9f9f9}
+.modal-tbl tr.sel{background:#eaf5fe}
+.btn-modal-voltar{padding:5px 14px;font-size:12px;border:1px solid #dddbda;background:white;border-radius:3px;cursor:pointer;color:#3e3e3c}
+.btn-modal-avancar{padding:5px 14px;font-size:12px;border:none;background:#1a3a6b;color:white;border-radius:3px;cursor:pointer}
+.btn-modal-avancar:hover{background:#0f2347}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:230px;min-width:230px;background:white;border-right:1px solid #dddbda;overflow-y:auto;display:flex;flex-direction:column;font-size:12px}
+.ph-bar{border-bottom:1px solid #dddbda;padding:6px;display:flex;gap:4px;align-items:center}
+.ph-badge{background:#c23934;border-radius:3px;padding:2px 6px;color:white;font-size:10px}
+.ss{border-bottom:1px solid #dddbda}
+.ssh{display:flex;align-items:center;justify-content:space-between;padding:7px;background:#fafafa}
+.sst{font-weight:600;font-size:11px;color:#3e3e3c}
+.ssb{padding:7px}
+.mfl{font-size:10px;color:#706e6b;margin-bottom:1px}
+.mfv{background:#f3f2f2;border:1px solid #dddbda;border-radius:3px;padding:2px 5px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.av-circle{width:44px;height:44px;border-radius:50%;background:#e0e5ee;display:flex;align-items:center;justify-content:center;color:#706e6b;font-weight:bold;font-size:13px;margin:3px auto}
+.icon-g{display:flex;gap:6px;padding:3px 0}
+.icon-b{width:30px;height:30px;background:#f3f2f2;border:1px solid #dddbda;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.cb-btn{font-size:10px;border:1px solid #dddbda;background:white;border-radius:3px;padding:2px 6px;cursor:pointer}
+.caso-box{background:#f9f9f9;border:1px solid #dddbda;border-radius:3px;padding:6px;margin-top:4px;font-size:10px}
+.caso-num{color:#0070d2;font-size:10px;font-weight:600}
+.sb-bottom{border-top:1px solid #dddbda;padding:6px;margin-top:auto;font-size:10px;color:#706e6b}
+.main{flex:1;overflow-y:auto;background:white}
+.tab-bar{border-bottom:1px solid #dddbda;display:flex;flex-wrap:wrap}
+.ti{padding:9px 11px;font-size:12px;color:#706e6b;cursor:pointer;border-bottom:2px solid transparent;border-top:none;border-left:none;border-right:none;background:none;white-space:nowrap}
+.ti:hover{color:#3e3e3c}.ti.act{color:#0070d2;border-bottom-color:#0070d2;font-weight:600}
+.ti-lg{font-size:13px;font-weight:500;padding:9px 14px}
+.cp{padding:14px}
+.cs-wrap{position:relative}
+.cs-btn{display:flex;align-items:center;gap:6px;border:1px solid #dddbda;border-radius:3px;padding:5px 10px;background:white;font-size:12px;color:#3e3e3c;cursor:pointer;min-width:200px}
+.cs-btn:hover{background:#f3f2f2}
+.cs-dd{position:absolute;top:100%;left:0;z-index:20;background:white;border:1px solid #dddbda;border-radius:3px;box-shadow:0 3px 8px rgba(0,0,0,0.1);min-width:200px}
+.cs-dd-item{display:block;width:100%;text-align:left;padding:7px 10px;font-size:12px;cursor:pointer;background:none;border:none;color:#3e3e3c}
+.cs-dd-item:hover{background:#eaf5fe}.cs-dd-item.sel{color:#0070d2;font-weight:600}
+.card-img{width:100px;height:60px;background:linear-gradient(135deg,#1a3a6b,#0d2250);border-radius:7px;padding:7px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0}
+.sec-hdr{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.sec-ico{width:18px;height:18px;background:#2e7d32;border-radius:3px;display:flex;align-items:center;justify-content:center;color:white;font-size:9px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:7px;margin-bottom:14px}
+.odf-l{font-size:11px;color:#706e6b;margin-bottom:1px}
+.odf-v{border:1px solid #dddbda;border-radius:3px;padding:3px 7px;font-size:12px;min-height:24px;display:flex;align-items:center;background:#f3f2f2;color:#3e3e3c}
+.odf-v.gr{background:#c9f0c9;color:#1e5c1e}
+.btn{padding:4px 11px;font-size:12px;border-radius:3px;font-weight:500;cursor:pointer;border:1px solid transparent}
+.bp{background:#0070d2;color:white;border-color:#0070d2}.bp:hover{background:#005fb2}.bp:disabled{opacity:.4;cursor:not-allowed}
+.bo{background:white;color:#0070d2;border-color:#0070d2}.bo:hover{background:#eaf5fe}
+.bg{background:transparent;color:#0070d2;border:none;padding-left:0}.bg:hover{text-decoration:underline}
+.bs{background:#04844b;color:white;border-color:#04844b}.bs:hover{background:#037340}
+.bd{background:white;color:#c23934;border-color:#c23934}.bd:hover{background:#fef1f1}
+.btn-navy{background:#1a3a6b;color:white;border:none;border-radius:3px;padding:6px 14px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-navy:hover{background:#0f2347}
+.btn-antec{background:#0070d2;color:white;border:none;border-radius:3px;padding:6px 14px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-antec:hover{background:#005fb2}
+.al{border-radius:3px;padding:7px 10px;font-size:11px;line-height:1.5;border:1px solid;margin-bottom:7px}
+.al-w{background:#fffaea;border-color:#f8d84c;color:#7a5700}
+.al-i{background:#eaf5fe;border-color:#0070d2;color:#032d60}
+.al-e{background:#fef1f1;border-color:#c23934;color:#7d1212}
+.ot{width:100%;border-collapse:collapse;font-size:11px}
+.ot th{padding:7px 10px;text-align:left;color:#706e6b;font-weight:600;background:#f3f2f2;border-bottom:1px solid #dddbda;white-space:nowrap}
+.ot th.r{text-align:right}.ot th.c{text-align:center}
+.ot td{padding:5px 10px;border-bottom:1px solid #f3f2f2;color:#3e3e3c}
+.ot td.r{text-align:right}.ot td.c{text-align:center}
+.ot tr.cl{cursor:pointer}.ot tr.cl:hover{background:#f9f9f9}
+.ot tr.sel{background:#eaf5fe}
+.ot tr.blocked{opacity:.5;background:#fafafa}
+.tw{border:1px solid #dddbda;border-radius:3px;overflow:hidden}
+.pill-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.pill{padding:4px 10px;border-radius:20px;border:1px solid #706e6b;color:#706e6b;font-size:10px;white-space:nowrap;cursor:pointer;flex-shrink:0}
+.pill.sel{background:#1a1a1a;color:white;border-color:#1a1a1a}
+.parc-btns-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 0}
+.divider-h{height:1px;background:#dddbda;margin:8px 0;width:100%}
+.stb{border-bottom:2px solid #0070d2;padding-bottom:3px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.st{font-size:13px;font-weight:600;color:#3e3e3c}
+.si{display:flex;gap:4px}
+.sd{height:4px;width:28px;border-radius:9999px;background:#dddbda}
+.sd.dn{background:#0070d2}
+.parc-card{border:1px solid #dddbda;border-radius:5px;padding:12px;margin-bottom:10px;cursor:pointer}
+.parc-card:hover{border-color:#0070d2;background:#fafcff}
+.parc-card.sel{border:2px solid #0070d2;background:#eaf5fe}
+.parc-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.parc-card-ref{font-size:12px;font-weight:700;color:#3e3e3c}
+.parc-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.pib{background:#f3f2f2;border-radius:3px;padding:6px}
+.pib-l{font-size:10px;color:#706e6b;margin-bottom:1px}
+.pib-v{font-size:12px;font-weight:600;color:#3e3e3c}
+.parc-rows{display:flex;gap:8px;margin-bottom:8px}
+.parc-stat{flex:1;border-radius:3px;padding:7px;text-align:center}
+.parc-stat.fat{background:#fde8e8;border:1px solid #f5c2c2}
+.parc-stat.dis{background:#ebf7ee;border:1px solid #a8ddb5}
+.parc-stat-n{font-size:16px;font-weight:700}
+.parc-stat.fat .parc-stat-n{color:#c23934}
+.parc-stat.dis .parc-stat-n{color:#04844b}
+.parc-stat-l{font-size:10px;color:#706e6b;margin-top:1px}
+.saldo-box{background:#f3f2f2;border-radius:3px;padding:8px;display:flex;justify-content:space-between;align-items:center}
+.saldo-l{font-size:11px;color:#706e6b}
+.saldo-vals{display:flex;gap:14px}
+.saldo-item-l{font-size:10px;color:#706e6b}
+.saldo-item-v{font-size:12px;font-weight:700;color:#3e3e3c}
+.saldo-item-v.blue{color:#0070d2}
+.scards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.sc{border:1px solid #dddbda;border-radius:3px;padding:10px}
+.sc.hl{border:2px solid #0070d2;background:#eaf5fe}
+.sc.yw{background:#fffaea;border-color:#f8d84c}
+.sc-l{font-size:10px;color:#706e6b;margin-bottom:3px}
+.sc-v{font-size:13px;font-weight:600;color:#3e3e3c}
+.sc.hl .sc-v{font-size:16px;font-weight:700;color:#0070d2}
+.sc.yw .sc-v{color:#7a5700}
+.sc-s{font-size:10px;color:#706e6b;margin-top:3px}
+.sc.hl .sc-s{color:#0070d2;font-weight:500}
+.pl{display:flex;gap:10px}
+.ptw{flex:1}
+.psb{width:186px;flex-shrink:0;display:flex;flex-direction:column;gap:6px}
+.rb{border:1px solid #dddbda;border-radius:3px;padding:10px}
+.rb-t{font-size:10px;color:#706e6b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.rr{margin-bottom:6px}
+.rr-l{font-size:10px;color:#706e6b}
+.rr-v{font-size:12px;font-weight:600}
+.rt{border-top:1px solid #dddbda;padding-top:5px;margin-top:5px}
+.rt-l{font-size:10px;color:#706e6b}
+.rt-v{font-size:15px;font-weight:700;color:#0070d2}
+.cfb{border:1px solid #dddbda;border-radius:3px;padding:10px;background:#f3f2f2;margin-bottom:10px}
+.cfr{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.cfr-l{color:#706e6b}.cfr-v{font-weight:600;color:#3e3e3c}.cfr-v.gr{color:#04844b}
+.cft{border-top:1px solid #dddbda;padding-top:7px;margin-top:7px;display:flex;justify-content:space-between;align-items:center}
+.cft-l{font-weight:700;color:#3e3e3c;font-size:12px}
+.cft-v{font-weight:700;color:#0070d2;font-size:14px}
+.fb{display:flex;justify-content:space-between;align-items:center}
+.fe{display:flex;justify-content:flex-end}
+.fg{display:flex;gap:6px}
+.mt4{margin-top:14px}.mt2{margin-top:7px}.mb3{margin-bottom:10px}.mb4{margin-bottom:14px}
+.tc{text-align:center}
+.lnk{background:none;border:none;color:#0070d2;font-size:11px;cursor:pointer;padding:0}.lnk:hover{text-decoration:underline}
+.bg-green{background:#c9f0c9;color:#1e5c1e;font-size:10px;font-weight:600;padding:1px 7px;border-radius:9999px}
+.bg-blue{background:#eaf5fe;color:#0070d2;font-size:10px;font-weight:600;padding:1px 7px;border-radius:9999px}
+.bg-red{background:#fde8e8;color:#9e1717;font-size:10px;font-weight:600;padding:1px 7px;border-radius:9999px}
+.divider-h{height:1px;background:#dddbda;margin:10px 0}
+.sico{width:44px;height:44px;border-radius:50%;background:#ebf7ee;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px}
+.tsrl{overflow-y:auto;max-height:220px}
+/* ── PORTOPLUS ACCORDIONS ─────────────────────────────────────────── */
+.pp-hdr{display:flex;align-items:center;gap:8px;padding:14px 0;margin-bottom:10px}
+.pp-hdr-icon{width:28px;height:28px;background:#e74c8b;border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px}
+.pp-hdr-title{font-size:13px;font-weight:600;color:#3e3e3c}
+.pp-acc{border:1px solid #dddbda;border-radius:4px;margin-bottom:4px;overflow:hidden;background:white}
+.pp-acc-head{display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:pointer;user-select:none}
+.pp-acc-head:hover{background:#f9f9f9}
+.pp-acc-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;flex-shrink:0}
+.pp-acc-icon.green{background:#2e7d32}
+.pp-acc-icon.pink{background:#e74c8b}
+.pp-acc-icon.blue{background:#1a73e8}
+.pp-acc-name{flex:1;font-size:12px;font-weight:500;color:#3e3e3c}
+.pp-acc-actions{display:flex;gap:6px;align-items:center}
+.pp-acc-eye{font-size:12px;color:#706e6b;cursor:pointer;opacity:.7}
+.pp-acc-eye:hover{opacity:1}
+.pp-acc-info{width:16px;height:16px;background:#706e6b;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer}
+.pp-acc-chevron{font-size:11px;color:#706e6b;transition:transform .15s}
+.pp-acc.open .pp-acc-chevron{transform:rotate(90deg)}
+.pp-acc-body{display:none;padding:10px 14px 14px;border-top:1px solid #dddbda;background:#ffffff;font-size:11px;color:#3e3e3c;line-height:1.6}
+.pp-acc.open .pp-acc-body{display:block}
+.pp-acc-body .pp-fld{margin-bottom:6px}
+.pp-acc-body .pp-fld-l{color:#706e6b;font-size:10px}
+.pp-acc-body .pp-fld-v{font-size:12px;font-weight:600;color:#3e3e3c}
+.pp-acc-body .pp-tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:11px}
+.pp-acc-body .pp-tbl th{text-align:left;padding:5px 8px;color:#706e6b;font-weight:600;background:#f3f2f2;border-bottom:1px solid #dddbda;font-size:10px}
+.pp-acc-body .pp-tbl td{padding:5px 8px;border-bottom:1px solid #f3f2f2}
+.pp-acc-body .pp-pill{display:inline-block;padding:1px 7px;border-radius:9999px;font-size:9px;font-weight:600}
+.pp-acc-body .pp-pill-green{background:#c9f0c9;color:#1e5c1e}
+.pp-acc-body .pp-pill-blue{background:#eaf5fe;color:#0070d2}
+.pp-acc-body .pp-pill-red{background:#fde8e8;color:#9e1717}
+/* ── PORTOPLUS FIEL SALESFORCE ────────────────────────────────────── */
+.pp-lbl{font-size:11px;color:#3e3e3c;margin-bottom:4px}
+.pp-input{border:1px solid #dddbda;border-radius:4px;padding:6px 10px;font-size:12px;color:#3e3e3c;background:#fff;width:100%}
+.pp-input:read-only{background:#fff}
+.pp-input.masked{color:#706e6b}
+.pp-eye-btn{font-size:14px;color:#706e6b;cursor:pointer;flex-shrink:0;opacity:.8}
+.pp-eye-btn:hover{opacity:1}
+.pp-dates{display:flex;gap:16px;align-items:flex-end;margin-bottom:10px}
+.pp-date-fld{flex:1}
+.pp-date-fld .pp-lbl{margin-bottom:4px}
+.pp-date-wrap{position:relative}
+.pp-date-wrap .pp-input{padding-right:28px}
+.pp-cal{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:13px;color:#706e6b;pointer-events:none}
+.pp-consultar{background:#c9c7c5;border:1px solid #c9c7c5;color:#fff;border-radius:4px;padding:6px 22px;font-size:12px;cursor:not-allowed;flex-shrink:0}
+.pp-select{border:1px solid #dddbda;border-radius:4px;padding:7px 10px;font-size:12px;color:#706e6b;background:#fff;width:100%;appearance:none}
+.pp-list{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}
+.pp-list th{text-align:left;padding:8px 10px;color:#3e3e3c;font-weight:600;background:#fafaf9;border-top:1px solid #dddbda;border-bottom:1px solid #dddbda;white-space:nowrap}
+.pp-list th .pp-sort{color:#706e6b;font-size:10px;margin-left:4px}
+.pp-list td{padding:8px 10px;border-bottom:1px solid #f3f2f2;color:#3e3e3c}
+.pp-consol-hdr{display:flex;margin-bottom:8px}
+.pp-consol-hdr span{font-size:11px;font-weight:700;color:#3e3e3c}
+.pp-consol-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}
+.pp-consol-row .pp-consol-l{font-size:11px;font-weight:700;color:#181818}
+.pp-track{width:100%;border-collapse:collapse;margin-top:4px;font-size:11px}
+.pp-track th,.pp-track td{border:1px solid #3e3e3c;padding:7px 10px;text-align:center;color:#3e3e3c;background:#fff}
+.pp-track th{font-weight:700}
+/* ── PORTOPLUS BACKOFFICE (novo conjunto LWC) ─────────────────────── */
+.pp-bo-hdr{display:flex;align-items:center;gap:10px;padding:16px 0 4px;margin-top:18px;border-top:1px solid #dddbda}
+.pp-bo-icon{width:28px;height:28px;background:#1a3a6b;border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;flex-shrink:0}
+.pp-bo-title{font-size:13px;font-weight:600;color:#3e3e3c}
+.pp-bo-sub{font-size:13px;font-weight:600;color:#3e3e3c;margin-top:8px}
+.pp-acc-icon.navy{background:#1a3a6b}
+.pp-hint{font-size:10px;color:#706e6b;margin-top:3px}
+.pp-err{font-size:10px;color:#c23934;margin-top:3px;display:none;font-weight:600}
+.pp-count{font-size:10px;color:#706e6b;text-align:right;margin-top:3px}
+textarea.pp-input{resize:vertical;min-height:64px;font-family:inherit}
+.pp-btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.pp-btn-cancel{background:#c23934;border:1px solid #c23934;color:#fff;border-radius:3px;padding:6px 22px;font-size:12px;cursor:pointer}
+.pp-btn-cancel:hover{background:#a93232}
+.pp-btn-exec{background:#04844b;border:1px solid #04844b;color:#fff;border-radius:3px;padding:6px 22px;font-size:12px;cursor:pointer}
+.pp-btn-exec:hover{background:#037340}
+.pp-toast{position:fixed;top:16px;right:16px;background:#04844b;color:#fff;border-radius:4px;padding:10px 16px;font-size:12px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:9999;display:flex;gap:8px;align-items:center}
+.pp-req-id{font-family:monospace}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+
+/* ── PROTO EXTENSÃO (template v1) ──────────────────────────────────
+   Pontos de extensão para acrescentar/ajustar uma jornada SEM mexer no restante:
+   EXT.tabs2   [[chave,'Rótulo']]  abas de nível 2 (barra superior do conteúdo)
+   EXT.tabs3   [[chave,'Rótulo']]  abas de nível 3 (dentro de 'Detalhes da Conta')
+   EXT.render  {chave: function(){return 'html';}}  conteúdo de uma aba (chave de tab2 ou tab3)
+   EXT.actions {acao: function(dado){ ...altera S... }}  ações (onclick="da('acao','dado')"); a tela é re-renderizada
+   EXT.reset   function(){}  restaura o estado da jornada (usado por 'Recomeçar' e pelo roteiro)
+   A jornada nova/ajustada vive APENAS entre os marcadores JORNADA:INICIO e JORNADA:FIM, abaixo de render(). */
+var EXT={tabs2:[],tabs3:[],render:{},actions:{},reset:function(){}};
+
+/* ── DATA ─────────────────────────────────────────────────────────── */
+var CLIENTE={nome:'Cliente Exemplo Um',cpf:'***.000.***-00',nasc:'12/07/1989',idade:'36',sexo:'Masculino',cpfInput:'***.000.***-00'};
+var CARTOES=[{id:1,label:'VISA CREDITO GOLD - 4521',tipo:'visa'},{id:2,label:'MASTERCARD PLATINUM - 7832',tipo:'master'}];
+var PARCELAMENTOS=[
+  {id:1,ref:'REF-2026-06-001',data:new Date(2026,5,25),n:20,principal:10000,taxa:0.02,parcelasPagas:1,dataUltimaPaga:new Date(2026,6,5),dataProxVenc:new Date(2026,6,5),seguro:45.80},
+  {id:2,ref:'REF-2026-03-007',data:new Date(2026,2,10),n:12,principal:3600,taxa:0.018,parcelasPagas:1,dataUltimaPaga:new Date(2026,6,5),dataProxVenc:new Date(2026,6,5),seguro:18.50}
+];
+var PROXIMA=new Date(2026,6,1);
+var PERIODOS=['17/02/2026','10/03/2026 - 17/03/2026','10/04/2026 - 17/04/2026','11/05/2026 - 17/05/2026','10/06/2026 - 17/06/2026','10/07/2026 - 17/07/2026','10/08/2026 - 17/08/2026','10/09/2026 - 17/09/2026'];
+
+/* ── UTILS ─────────────────────────────────────────────────────────── */
+var brl=function(v){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);};
+var ptDt=function(d){return d.toLocaleDateString('pt-BR');};
+var pct=function(v){return (v*100).toFixed(2).replace('.',',')+' a.m.';};
+var esc=function(s){return String(s).replace(/&(?!#\d+;)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+function calcPrice(pr,tx,n,base){var pmt=(pr*tx)/(1-Math.pow(1+tx,-n));var s=pr;return Array.from({length:n},function(_,i){var j=s*tx,a=pmt-j;s=Math.max(0,s-a);var v=new Date(base.getFullYear(),base.getMonth()+i+1,5);return{num:i+1,venc:v,pmt:pmt,amort:a,juros:j,saldo:s};});}
+function getEmAberto(p){var t=calcPrice(p.principal,p.taxa,p.n,p.data);return t.filter(function(r){return r.num>p.parcelasPagas;});}
+function getSaldo(p){var av=getEmAberto(p);return{valorOrig:av.reduce(function(s,r){return s+r.pmt;},0),valorAmortz:av.reduce(function(s,r){return s+r.amort;},0),juros:av.reduce(function(s,r){return s+r.juros;},0),count:av.length};}
+
+/* ── STATE ─────────────────────────────────────────────────────────── */
+var S={tela:'home',contaSel:0,cartaoIdx:0,tab2:'detalhes',tab3:'fatura',tab4:'parcelamento',showDD:false,periodIdx:4,showAntecipacao:false,step:1,parc:null,modal:null,conf:null,parcSel:null,selNums:[],showAll:false,portoplusAcc:{},ppShow:{}};
+
+/* ── HELPERS ───────────────────────────────────────────────────────── */
+function fld(l,v,gr){return '<div><div class="odf-l">'+esc(l)+'</div><div class="odf-v'+(gr?' gr':'')+'">'+esc(v||'')+'</div></div>';}
+function btn(t,a,cls,dis,d){return '<button class="btn '+cls+'"'+(dis?' disabled':'')+' onclick="da(\''+a+'\',\''+(d||'')+'\')">'+t+'</button>';}
+function al(type,html){return '<div class="al al-'+type+'">'+html+'</div>';}
+function mf(l,v){return '<div><div class="mfl">'+l+'</div><div class="mfv">'+v+'</div></div>';}
+
+/* ── HOME ──────────────────────────────────────────────────────────── */
+function renderTopNav(){
+  return '<div class="topnav"><div class="sf-logo">SF</div><span class="nav-appname">Banco Exemplo</span><div class="nav-inicio">Inicio &#9660;</div><div class="topnav-search">&#128269; Pesquisar...</div><div class="nav-icons"><span>&#9733;</span><span>+</span><span>&#128276;</span><span>?</span><div class="avatar">JS</div></div></div>';
+}
+function renderHome(){
+  var modal=S.tela==='modal1'?renderModal1():(S.tela==='modal2'?renderModal2():'');
+  return '<div class="app">'+renderTopNav()+'<div style="flex:1;overflow:hidden;position:relative"><div class="home-body"><div class="home-panel"><div class="busca-section"><div class="busca-title">&#128269; Buscar Cliente</div><div class="tipo-label">Tipo de Busca</div><div class="tipo-btns"><button class="tipo-btn act">CPF</button><button class="tipo-btn">CNPJ</button><button class="tipo-btn">Protocolo/Caso</button><button class="tipo-btn">N&#227;o Cliente</button></div><div class="cpf-label">Informe o CPF do cliente</div><input class="cpf-input" type="text" value="'+CLIENTE.cpfInput+'" readonly><br><button class="buscar-btn" onclick="da(\'buscarCliente\',\'\')">Buscar Cliente</button></div><div class="pub-section"><div class="pub-title">Publica&#231;&#245;es</div><div style="font-size:11px;color:#706e6b;margin-bottom:6px">Selecione</div><select class="pub-select"><option>N&#227;o Lidas</option></select><table class="pub-table"><thead><tr><th>Publica&#231;&#227;o</th><th>Data In&#237;cio</th><th>Data Fim</th><th>Data da Publica&#231;&#227;o</th></tr></thead><tbody></tbody></table></div></div></div>'+modal+'</div></div>';
+}
+function renderModal1(){
+  return '<div class="modal-overlay"><div class="modal-card" style="min-width:560px"><span class="modal-close" onclick="da(\'voltarM1\',\'\')">&#10005;</span><div class="modal-title">Sele&#231;&#227;o de produto</div><p style="font-size:12px;color:#706e6b;margin-bottom:18px">Sobre qual produto &#233; o atendimento?</p><div class="modal-produtos"><div class="prod-card pf"><div class="prod-title">PF (Pessoa F&#237;sica)</div><div class="prod-icons"><div class="prod-icon-btn" onclick="da(\'selProduto\',\'\')"><div class="prod-icon-box">&#128179;</div><div class="prod-icon-label">Conta Digital</div></div><div class="prod-icon-btn" onclick="da(\'selProduto\',\'\')"><div class="prod-icon-box">&#128179;</div><div class="prod-icon-label">Cart&#227;o Banco Exemplo</div></div></div></div><div class="prod-card" style="cursor:default"><div class="prod-title">PJ (Pessoa Jur&#237;dica)</div><p class="prod-pj-msg">O cliente n&#227;o possui produto de pessoa jur&#237;dica.</p></div></div><div class="modal-footer"><button class="btn-modal-voltar" onclick="da(\'voltarM1\',\'\')">Voltar</button></div></div></div>';
+}
+function renderModal2(){
+  var rows=CARTOES.map(function(c,i){var isSel=S.contaSel===i;var s1=i===0?'A-Inatividade':'Ativo Bloq1 Branco';var sP=i===0?'F - Falsificado / Fraude':'M - Envio Correio / Bloqueado';return '<tr class="cl'+(isSel?' sel':'')+'" onclick="da(\'selConta\',\''+i+'\')"><td style="text-align:center"><input type="radio"'+(isSel?' checked':'')+' style="accent-color:#0070d2"></td><td style="font-weight:500">'+esc(c.label)+'</td><td></td><td>'+s1+'</td><td>'+sP+'</td></tr>';}).join('');
+  return '<div class="modal-overlay"><div class="modal-card modal-lg"><div class="modal-title-center">Selecione a conta desejada</div><table class="modal-tbl"><thead><tr><th style="width:40px"></th><th>Bandeira / Conta</th><th>Status Bloq 2</th><th>Status Bloq 1</th><th>Status Pl&#225;stico</th></tr></thead><tbody>'+rows+'</tbody></table><div class="modal-footer"><button class="btn-modal-voltar" onclick="da(\'voltarM2\',\'\')">Voltar</button><button class="btn-modal-avancar" onclick="da(\'avancar\',\'\')">Avan&#231;ar</button></div></div></div>';
+}
+
+/* ── SIDEBAR ───────────────────────────────────────────────────────── */
+function renderSidebar(){
+  var g2=function(items){return '<div class="g2">'+items.map(function(x){return mf(x[0],x[1]);}).join('')+'</div>';};
+  return '<div class="sidebar"><div class="ph-bar"><div class="ph-badge">&#128222; Em atendimento</div></div><div class="ss"><div class="ssh"><span class="sst">&#128100; Perfil do Cliente</span></div><div class="ssb"><div class="av-circle">CP</div></div></div><div class="ss"><div class="ssh"><span class="sst">&#127970; Relacionamento Banco Exemplo</span></div><div class="ssb"><div class="icon-g"><div class="icon-b">&#128179;</div><div class="icon-b">&#127968;</div><div class="icon-b">&#128663;</div></div></div></div><div class="ss"><div class="ssh"><span class="sst">&#9888; Alertas</span><button class="cb-btn">Consultar Alertas</button></div></div><div class="ss"><div class="ssh"><span class="sst">&#9660; Dados Cadastrais</span></div><div class="ssb">'+mf('Nome Social','&mdash;')+'<div style="margin-top:3px">'+mf('Nome Civil',CLIENTE.nome.toUpperCase())+'</div><div style="margin-top:3px">'+g2([['CPF',CLIENTE.cpf],['Nascimento',CLIENTE.nasc]])+'</div><div style="margin-top:3px">'+g2([['Idade',CLIENTE.idade],['Sexo',CLIENTE.sexo]])+'</div></div></div><div class="ss"><div class="ssh"><span class="sst">&#128241; Aplicativo</span></div><div class="ssb">'+g2([['Instalado?','&#10003; iOS'],['Ult. Acesso','12/06/2026']])+'</div></div><div class="ss"><div class="ssh"><span class="sst">&#128205; Dados p/ Contato</span></div><div class="ssb">'+mf('CEP','*****')+'<div style="margin-top:3px">'+mf('Celular','*****')+'</div><div style="margin-top:3px">'+mf('E-mail','*****')+'</div></div></div><div class="ss"><div class="ssh"><span class="sst">&#128193; Casos (1+)</span></div><div class="ssb"><div class="caso-box"><span class="caso-num">20260075831675</span><div style="font-size:10px;color:#706e6b;margin-top:3px">26/06/2026 18:41 &middot; Cart&#227;o Banco Exemplo &middot; <strong>Fechado Com Sucesso</strong></div></div></div></div><div class="ss"><div class="ssh"><span class="sst">&#128228; SAC - Elogios e Reclama&#231;&#245;es</span></div></div><div class="ss"><div class="ssh"><span class="sst">&#128100; Procurador</span><button class="cb-btn">Consultar informa&#231;&#245;es</button></div></div><div class="sb-bottom">&#128274; Atendimento Ultra</div></div>';
+}
+
+/* ── ANTECIPACAO STEPS ─────────────────────────────────────────────── */
+
+/* STEP 1 — Lista de parcelamentos
+   Valor da parcela = PMT + seguro (valor real cobrado ao cliente) */
+function step1(){
+  var cards=PARCELAMENTOS.map(function(p){
+    var sd=getSaldo(p);
+    var tab=calcPrice(p.principal,p.taxa,p.n,p.data);
+    var pmt=tab[0].pmt;
+    var totalParcela=pmt+p.seguro; /* PMT + Seguro Prestamista */
+    var isSel=S.parcSel&&S.parcSel.id===p.id;
+    return '<div class="parc-card'+(isSel?' sel':'')+'" onclick="da(\'selParc\',\''+p.id+'\')">'
+      +'<div class="parc-card-hdr"><div><div class="parc-card-ref">'+esc(p.ref)+'</div><div style="font-size:10px;color:#706e6b;margin-top:2px">Contratado em '+ptDt(p.data)+' &middot; '+esc(CARTOES[0].label)+'</div></div><div style="display:flex;gap:5px"><span class="bg-green">Ativo</span>'+(isSel?'<span class="bg-blue">&#10003; Selecionado</span>':'')+'</div></div>'
+      +'<div class="parc-info-grid">'
+        +'<div class="pib"><div class="pib-l">Valor da Parcela (com Seguro)</div><div class="pib-v">'+brl(totalParcela)+'</div></div>'
+        +'<div class="pib"><div class="pib-l">Parcela (Amortz+Juros)</div><div class="pib-v" style="font-size:11px;color:#706e6b">'+brl(pmt)+'</div></div>'
+        +'<div class="pib"><div class="pib-l">Seguro Prestamista</div><div class="pib-v" style="font-size:11px;color:#706e6b">'+brl(p.seguro)+'</div></div>'
+        +'<div class="pib"><div class="pib-l">Total de Parcelas</div><div class="pib-v">'+p.n+'x</div></div>'
+        +'<div class="pib"><div class="pib-l">Taxa do Contrato</div><div class="pib-v">'+pct(p.taxa)+'</div></div>'
+        +'<div class="pib"><div class="pib-l">Data Pr&#243;x. Vencimento</div><div class="pib-v">'+ptDt(p.dataProxVenc)+'</div></div>'
+      +'</div>'
+      +'<div class="parc-rows">'
+        +'<div class="parc-stat fat"><div class="parc-stat-n">'+p.parcelasPagas+'</div><div class="parc-stat-l">Parcela(s) Paga(s)<br><span style="font-size:9px">J&#225; na fatura vigente</span></div></div>'
+        +'<div class="parc-stat dis"><div class="parc-stat-n">'+(p.n-p.parcelasPagas)+'</div><div class="parc-stat-l">Em Aberto<br><span style="font-size:9px">Dispon&#237;veis para antecipa&#231;&#227;o</span></div></div>'
+      +'</div>'
+      +'<div class="saldo-box"><div class="saldo-l">Saldo Devedor Total<br><span style="font-size:10px;color:#706e6b">('+sd.count+' parcelas em aberto)</span></div><div class="saldo-vals"><div style="text-align:right"><div class="saldo-item-l">Vr. Original (Amortz+Juros)</div><div class="saldo-item-v">'+brl(sd.valorOrig)+'</div></div><div style="text-align:right"><div class="saldo-item-l">Vr. Amortz (descapitalizado)</div><div class="saldo-item-v blue">'+brl(sd.valorAmortz)+'</div></div></div></div>'
+    +'</div>';
+  }).join('');
+  return '<p style="font-size:11px;color:#706e6b;margin-bottom:10px">Parcelamentos ativos vinculados a este cart&#227;o. Selecione o contrato para simular:</p>'+cards+'<div class="fe mt4">'+btn('Simular Antecipa&#231;&#227;o','confirmarSelParc','bp',!S.parcSel)+'</div>';
+}
+
+/* STEP 2 — Detalhes do parcelamento */
+function step2(){
+  var p=S.parc,tab=calcPrice(p.principal,p.taxa,p.n,p.data),pmt=tab[0].pmt;
+  var av=getEmAberto(p),sd=getSaldo(p);
+  var rows=(S.showAll?tab:tab.slice(0,4)).map(function(r){
+    var isPaga=r.num<=p.parcelasPagas;
+    return '<tr'+(isPaga?' class="blocked"':'')+'><td class="c">'+r.num+(isPaga?' <span class="bg-red">Paga</span>':'')+'</td><td>'+ptDt(r.venc)+'</td><td class="r">'+brl(r.pmt)+'</td><td class="r" style="color:#0070d2;font-weight:500">'+brl(r.amort)+'</td><td class="r" style="color:#706e6b">'+brl(r.juros)+'</td><td class="r">'+brl(r.saldo)+'</td></tr>';
+  }).join('');
+  return '<div class="fgrid mb4">'
+    +fld('Identificador (Ref.)',p.ref)
+    +fld('Dados do Cart&#227;o',CARTOES[0].label)
+    +fld('Data de Contrata&#231;&#227;o',ptDt(p.data))
+    +fld('Valor da Parcela (Amortz+Juros)',brl(pmt))
+    +fld('Seguro Prestamista / Parcela',brl(p.seguro))
+    +fld('Valor Total da Parcela (com Seguro)',brl(pmt+p.seguro))
+    +fld('Qtd. Total de Parcelas',p.n+'x')
+    +fld('Taxa do Contrato',pct(p.taxa))
+    +fld('Data Pr&#243;x. Vencimento',ptDt(p.dataProxVenc))
+    +fld('Parcelas Pagas',p.parcelasPagas+' parcela(s) na fatura vigente')
+    +fld('Parcelas em Aberto',av.length+' dispon&#237;veis para antecipa&#231;&#227;o')
+    +fld('Saldo Devedor (Vr. Amortz)',brl(sd.valorAmortz))
+  +'</div>'
+  +'<p style="font-size:11px;font-weight:600;color:#3e3e3c;margin-bottom:5px">Tabela de Amortiza&#231;&#227;o &mdash; Sistema Price <span style="font-weight:400;color:#706e6b">(Seguro Prestamista n&#227;o inclu&#237;do)</span></p>'
+  +'<div class="tw mb3"><table class="ot"><thead><tr><th class="c">N&#186;</th><th>Vencimento</th><th class="r">Presta&#231;&#227;o</th><th class="r">Amortiza&#231;&#227;o</th><th class="r">Juros</th><th class="r">Saldo Dev.</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+  +(!S.showAll?'<button class="lnk mb3" onclick="da(\'toggleAll\',\'\')">&#8595; Ver todas as '+tab.length+' parcelas</button>':'<button class="lnk mb3" onclick="da(\'toggleAll\',\'\')">&#8593; Recolher</button>')
+  +'<div class="fb mt4">'+btn('&larr; Voltar','voltarStep','bg')+'<div class="fg">'+btn('Antecipa&#231;&#227;o Parcial','escolherModal','bo',false,'parcial')+btn('Quita&#231;&#227;o Total','escolherModal','bp',false,'total')+'</div></div>';
+}
+
+/* Bloco de destaque seguro — usado em step3total e step3parcial */
+function blocoSeguro(valorAmort, valorSeguro, valorTotal, nParcelas){
+  return '<div style="border:2px solid #0070d2;border-radius:4px;padding:12px;background:#eaf5fe;margin-bottom:14px">'
+    +'<div style="font-size:11px;font-weight:700;color:#0070d2;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Valor a Pagar</div>'
+    +'<div style="display:flex;align-items:flex-end;gap:16px">'
+      +'<div style="flex:1">'
+        +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
+          +'<tr><td style="padding:3px 0;color:#706e6b">Valor antecipado (Amortz):</td><td style="text-align:right;font-weight:600;color:#3e3e3c">'+brl(valorAmort)+'</td></tr>'
+          +'<tr><td style="padding:3px 0;color:#706e6b">+ Seguro Prestamista ('+nParcelas+'&times;'+brl(valorSeguro/nParcelas)+'):</td><td style="text-align:right;font-weight:600;color:#706e6b">'+brl(valorSeguro)+'</td></tr>'
+          +'<tr style="border-top:1px solid #c7e0f4"><td style="padding:5px 0 3px;font-weight:700;color:#0070d2">= Total com Seguro:</td><td style="text-align:right;font-size:18px;font-weight:800;color:#0070d2;padding:5px 0 3px">'+brl(valorTotal)+'</td></tr>'
+        +'</table>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+/* STEP 3 — Quitação Total */
+function step3total(){
+  var p=S.parc,av=getEmAberto(p),sd=getSaldo(p);
+  var valorAmort=sd.valorAmortz;
+  var valorSeguro=p.seguro*av.length;
+  var valorTotal=valorAmort+valorSeguro;
+  return al('w','<strong>Parcela(s) paga(s):</strong> '+p.parcelasPagas+' parcela(s) j&#225; na fatura vigente (lan&#231;amento '+ptDt(p.dataUltimaPaga)+') n&#227;o podem ser antecipadas. A simula&#231;&#227;o considera as <strong>'+av.length+' parcelas em aberto</strong>.')
+    +'<div class="scards">'
+      +'<div class="sc"><div class="sc-l">Valor sem antecipa&#231;&#227;o (Orig.)</div><div class="sc-v">'+brl(sd.valorOrig+(p.seguro*av.length))+'</div><div class="sc-s">'+av.length+' parc. &times; '+brl(av.length>0?(sd.valorOrig/av.length)+p.seguro:0)+'</div></div>'
+      +'<div class="sc yw"><div class="sc-l">Juros economizados (desconto)</div><div class="sc-v">'+brl(sd.juros)+'</div><div class="sc-s">Descapitaliza&#231;&#227;o das parcelas</div></div>'
+      +'<div class="sc" style="background:#f3f2f2"><div class="sc-l">Valor antecipado (sem seguro)</div><div class="sc-v">'+brl(valorAmort)+'</div><div class="sc-s">Amortz &times; '+av.length+' parcelas</div></div>'
+    +'</div>'
+    +blocoSeguro(valorAmort,valorSeguro,valorTotal,av.length)
+    +al('i','<strong>Aten&#231;&#227;o:</strong> O valor total de <strong>'+brl(valorTotal)+'</strong> ser&#225; lan&#231;ado na pr&#243;xima fatura (venc. <strong>'+ptDt(PROXIMA)+'</strong>).')
+    +'<div class="fb mt4">'+btn('&larr; Voltar','voltarStep','bg')+btn('Confirmar Quita&#231;&#227;o Total','confirmarTotal','bs')+'</div>';
+}
+
+/* STEP 3 — Antecipação Parcial com checkboxes livres */
+function step3parcial(){
+  var p=S.parc;
+  var tab=calcPrice(p.principal,p.taxa,p.n,p.data);
+  var selNums=S.selNums;
+  var rows=tab.map(function(r){
+    var isPaga=r.num<=p.parcelasPagas,isSel=selNums.indexOf(r.num)>=0;
+    if(isPaga)return '<tr class="blocked"><td class="c"><input type="checkbox" disabled></td><td class="c">'+r.num+' <span class="bg-red">Paga</span></td><td>'+ptDt(r.venc)+'</td><td class="r" style="color:#aaa">'+brl(r.pmt)+'</td><td class="r" style="color:#aaa">'+brl(r.amort)+'</td><td class="r" style="color:#aaa">'+brl(r.juros)+'</td></tr>';
+    return '<tr class="cl'+(isSel?' sel':'')+'" onclick="da(\'togParcela\',\''+r.num+'\')"><td class="c"><input type="checkbox"'+(isSel?' checked':'')+' onclick="event.stopPropagation();da(\'togParcela\',\''+r.num+'\')" style="accent-color:#0070d2;cursor:pointer"></td><td class="c">'+r.num+'</td><td>'+ptDt(r.venc)+'</td><td class="r">'+brl(r.pmt)+'</td><td class="r" style="color:#0070d2;font-weight:500">'+brl(r.amort)+'</td><td class="r" style="color:#706e6b">'+brl(r.juros)+'</td></tr>';
+  }).join('');
+  var selRows=tab.filter(function(r){return selNums.indexOf(r.num)>=0;});
+  var valorAmort=selRows.reduce(function(s,r){return s+r.amort;},0);
+  var valorJuros=selRows.reduce(function(s,r){return s+r.juros;},0);
+  var valorSeguro=p.seguro*selRows.length;
+  var valorTotal=valorAmort+valorSeguro;
+  var n=selRows.length;
+  var resumeHtml=n===0?'<p style="font-size:11px;color:#706e6b;font-style:italic">Selecione as parcelas desejadas</p>':
+    '<div class="rr"><div class="rr-l">Qtd. selecionada</div><div class="rr-v">'+n+' parcela'+(n>1?'s':'')+'</div></div>'
+    +'<div class="rr"><div class="rr-l">Juros economizados</div><div class="rr-v" style="color:#04844b">'+brl(valorJuros)+'</div></div>'
+    +'<div style="border:1px solid #0070d2;border-radius:3px;padding:7px;background:#eaf5fe;margin-top:4px">'
+      +'<div style="font-size:10px;color:#0070d2;font-weight:700;margin-bottom:4px">Valor a Pagar</div>'
+      +'<div style="font-size:10px;color:#706e6b">Amortz: <strong style="color:#3e3e3c">'+brl(valorAmort)+'</strong></div>'
+      +'<div style="font-size:10px;color:#706e6b">+ Seguro: <strong style="color:#706e6b">'+brl(valorSeguro)+'</strong></div>'
+      +'<div style="font-size:14px;font-weight:800;color:#0070d2;margin-top:3px;border-top:1px solid #c7e0f4;padding-top:3px">'+brl(valorTotal)+'</div>'
+    +'</div>';
+  var warnHtml=n>0?al('w','<strong>Aten&#231;&#227;o ao cliente:</strong> As parcelas em aberto n&#227;o selecionadas continuar&#227;o sendo cobradas normalmente nas faturas subsequentes.'):'';
+  return al('e','<strong>Parcela(s) paga(s):</strong> '+p.parcelasPagas+' parcela(s) j&#225; na fatura (lan&#231;amento '+ptDt(p.dataUltimaPaga)+') n&#227;o podem ser antecipadas. Selecione livremente as parcelas <strong>em aberto</strong>:')
+    +'<div class="pl">'
+      +'<div class="ptw"><p style="font-size:11px;color:#706e6b;margin-bottom:6px">Selecione as parcelas <strong>em aberto</strong> &mdash; qualquer combina&#231;&#227;o &#233; permitida:</p>'
+        +'<div class="tw"><div class="tsrl"><table class="ot"><thead style="position:sticky;top:0;background:#f3f2f2;z-index:5"><tr><th style="width:28px"></th><th class="c">N&#186;</th><th>Vencimento</th><th class="r">Presta&#231;&#227;o</th><th class="r">Amortiza&#231;&#227;o</th><th class="r">Juros</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'
+      +'</div>'
+      +'<div class="psb"><div class="rb"><div class="rb-t">Resumo da Simula&#231;&#227;o</div>'+resumeHtml+'</div>'+warnHtml+'</div>'
+    +'</div>'
+    +'<div class="fb mt4">'+btn('&larr; Voltar','voltarStep','bg')+btn('Confirmar Antecipa&#231;&#227;o Parcial','confirmarParcial','bp',n===0)+'</div>';
+}
+
+/* STEP 4 — Confirmação com destaque do seguro */
+function step4(){
+  var p=S.parc,tab=calcPrice(p.principal,p.taxa,p.n,p.data),pmt=tab[0].pmt;
+  var conf=S.conf,isTotal=conf.tipo==='total',nP=conf.parcelas?conf.parcelas.length:0;
+  return '<div class="cfb">'
+    +'<div class="cfr"><span class="cfr-l">Identificador do Contrato</span><span class="cfr-v">'+esc(p.ref)+'</span></div>'
+    +'<div class="cfr"><span class="cfr-l">Dados do Cart&#227;o</span><span class="cfr-v">'+esc(CARTOES[0].label)+'</span></div>'
+    +'<div class="cfr"><span class="cfr-l">Opera&#231;&#227;o</span><span class="cfr-v">'+(isTotal?'Quita&#231;&#227;o Total ('+nP+' parcelas em aberto)':'Antecipa&#231;&#227;o Parcial &mdash; '+nP+' parcela'+(nP>1?'s':''))+'</span></div>'
+    +'<div class="cfr"><span class="cfr-l">Valor da parcela original (Amortz+Juros)</span><span class="cfr-v">'+brl(pmt)+'</span></div>'
+    +'<div class="cfr"><span class="cfr-l">Juros economizados (desconto)</span><span class="cfr-v gr">'+brl(conf.economia)+'</span></div>'
+    +'<div style="border-top:1px solid #dddbda;margin:8px 0 8px;padding-top:8px">'
+      +'<div class="cfr"><span class="cfr-l">Valor antecipado (Amortz, sem seguro)</span><span class="cfr-v">'+brl(conf.valorAmort)+'</span></div>'
+      +'<div class="cfr"><span class="cfr-l">+ Seguro Prestamista ('+nP+'&times;'+brl(p.seguro)+')</span><span class="cfr-v">'+brl(conf.valorSeguro)+'</span></div>'
+    +'</div>'
+    +'<div style="background:#eaf5fe;border:2px solid #0070d2;border-radius:3px;padding:8px;display:flex;justify-content:space-between;align-items:center">'
+      +'<span style="font-weight:700;color:#3e3e3c;font-size:12px">= Valor Total a Pagar (com Seguro)</span>'
+      +'<span style="font-weight:800;color:#0070d2;font-size:16px">'+brl(conf.valor)+'</span>'
+    +'</div>'
+    +'<div class="cfr" style="margin-top:7px"><span class="cfr-l">Lan&#231;amento na fatura de venc.</span><span class="cfr-v">'+ptDt(PROXIMA)+'</span></div>'
+  +'</div>'
+  +al('i','<strong>Script para o atendente:</strong><br>"Senhor(a), confirma a '+(isTotal?'quita&#231;&#227;o total de '+nP+' parcelas em aberto':'antecipa&#231;&#227;o de '+nP+' parcela'+(nP>1?'s':''))+' do contrato '+esc(p.ref)+'? O valor a pagar ser&#225; de <strong>'+brl(conf.valor)+'</strong> (sendo '+brl(conf.valorAmort)+' de amortiza&#231;&#227;o + '+brl(conf.valorSeguro)+' de seguro prestamista), lan&#231;ado na pr&#243;xima fatura com vencimento em <strong>'+ptDt(PROXIMA)+'</strong>. Gera uma economia de <strong>'+brl(conf.economia)+'</strong> em juros."')
+  +(!isTotal?'<div class="mt2">'+al('w','<strong>Lembrete:</strong> As parcelas em aberto n&#227;o selecionadas continuar&#227;o sendo cobradas normalmente.')+'</div>':'')
+  +'<div class="fb mt4">'+btn('Cancelar','voltarStep','bd')+btn('&#10003; Confirmar e Efetivar','finalizar','bs')+'</div>';
+}
+
+/* STEP 5 — Sucesso */
+function step5(){
+  var conf=S.conf,nP=conf.parcelas?conf.parcelas.length:0;
+  var proto='ATC-2026-'+(Math.floor(Math.random()*900000)+100000);
+  return '<div class="tc" style="padding:20px 0">'
+    +'<div class="sico">&#9989;</div>'
+    +'<p style="font-size:14px;font-weight:700;color:#3e3e3c;margin-bottom:3px">'+(conf.tipo==='total'?'Quita&#231;&#227;o Total Processada!':'Antecipa&#231;&#227;o de '+nP+' Parcela'+(nP>1?'s':'')+' Processada!')+'</p>'
+    +'<p style="font-size:18px;font-weight:800;color:#0070d2;margin-bottom:6px">'+brl(conf.valor)+'</p>'
+    +'<div style="display:inline-block;background:#f3f2f2;border:1px solid #dddbda;border-radius:4px;padding:8px 16px;margin-bottom:8px;text-align:left">'
+      +'<div style="font-size:11px;color:#706e6b">Amortz: <strong style="color:#3e3e3c">'+brl(conf.valorAmort)+'</strong> + Seguro: <strong style="color:#3e3e3c">'+brl(conf.valorSeguro)+'</strong></div>'
+      +'<div style="font-size:11px;color:#04844b;font-weight:600;margin-top:2px">Economia: '+brl(conf.economia)+' em juros</div>'
+    +'</div>'
+    +'<p style="font-size:11px;color:#706e6b;margin-bottom:2px">Lan&#231;ado na fatura com vencimento em '+ptDt(PROXIMA)+'</p>'
+    +'<p style="font-size:11px;color:#706e6b;margin-bottom:16px">Protocolo: <strong style="color:#3e3e3c">'+proto+'</strong></p>'
+    +btn('Nova simula&#231;&#227;o','resetFlow','bo')
+  +'</div>';
+}
+
+/* ── PARCELAMENTO TAB ──────────────────────────────────────────────── */
+function renderParcelamentoFatura(){
+  if(!S.showAntecipacao){
+    return '<div class="parc-btns-wrap"><button class="btn-navy"><span>&#128196;</span> Consultar op&#231;&#245;es de parcelamento</button><div class="divider-h" style="width:280px"></div><button class="btn-antec" onclick="da(\'showAntecipacao\',\'\')"><span>&#128257;</span> Simular Antecipa&#231;&#227;o de Parcelamentos</button></div>';
+  }
+  var titles={1:'Antecipa&#231;&#227;o de Parcelamento',2:'Detalhes do Parcelamento',3:S.modal==='total'?'Simula&#231;&#227;o &mdash; Quita&#231;&#227;o Total':'Simula&#231;&#227;o &mdash; Antecipa&#231;&#227;o Parcial',4:'Confirma&#231;&#227;o',5:'Opera&#231;&#227;o Confirmada'};
+  var sbar=(S.step>1&&S.step<5)?'<div class="si">'+[1,2,3,4].map(function(s){return '<div class="sd'+(s<S.step?' dn':'')+'"></div>';}).join('')+'</div>':'';
+  var content='';
+  if(S.step===1)content=step1();
+  else if(S.step===2)content=step2();
+  else if(S.step===3&&S.modal==='total')content=step3total();
+  else if(S.step===3&&S.modal==='parcial')content=step3parcial();
+  else if(S.step===4)content=step4();
+  else if(S.step===5)content=step5();
+  return '<div><div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="bg" onclick="da(\'hideAntecipacao\',\'\')">&#10005; Fechar</button></div><div class="stb"><div class="st">'+titles[S.step]+'</div>'+sbar+'</div>'+content+'</div>';
+}
+
+/* ── PORTOPLUS ──────────────────────────────────────────────────────── */
+function ppAcc(key,iconClass,iconChar,name,hasEye,hasInfo,bodyHtml){
+  var isOpen=!!S.portoplusAcc[key];
+  var eye=hasEye?'<span class="pp-acc-eye" onclick="event.stopPropagation();da(\'ppEye\',\''+key+'\')">&#128065;</span>':'';
+  var info=hasInfo?'<span class="pp-acc-info" onclick="event.stopPropagation();da(\'ppInfo\',\''+key+'info\')">i</span>':'';
+  return '<div class="pp-acc'+(isOpen?' open':'')+'">'
+    +'<div class="pp-acc-head" onclick="da(\'ppAcc\',\''+key+'\')">'
+      +'<div class="pp-acc-icon '+iconClass+'">'+iconChar+'</div>'
+      +'<div style="color:#706e6b;font-size:11px;width:14px;text-align:center">'+(isOpen?'&#709;':'&#707;')+'</div>'
+      +'<div class="pp-acc-name">'+name+'</div>'
+      +'<div class="pp-acc-actions">'+eye+info+'</div>'
+    +'</div>'
+    +'<div class="pp-acc-body">'+bodyHtml+'</div>'
+  +'</div>';
+}
+function renderPortoplus(){
+  /* 1 — Saldo de Pontos: label + campo mascarado + olho ao lado (print 11_41_15) */
+  var saldoVal=S.ppShow['saldo']?'12.450':'***';
+  var saldoBody='<div style="max-width:640px"><div class="pp-lbl">Saldo de Pontos</div>'
+    +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<input class="pp-input masked" readonly value="'+saldoVal+'">'
+      +'<span class="pp-eye-btn" onclick="da(\'ppEye\',\'saldo\')">&#128065;</span>'
+    +'</div></div>';
+  /* 2 — Pontos a Expirar: olho no título + grid 2 colunas (print 11_41_15) */
+  var expirarBody='<table class="pp-list"><thead><tr><th style="width:50%">Quantidade de pontos<span class="pp-sort">&#709;</span></th><th>Data da expira&#231;&#227;o<span class="pp-sort">&#709;</span></th></tr></thead><tbody></tbody></table>';
+  /* 3 — Histórico de Resgates: olho no título + 2 datas + Consultar + grid 4 col (print 11_41_15) */
+  var historicoBody='<div class="pp-dates">'
+    +'<div class="pp-date-fld"><div class="pp-lbl">Data Inicial</div><div class="pp-date-wrap"><input class="pp-input" readonly><span class="pp-cal">&#128197;</span></div></div>'
+    +'<div class="pp-date-fld"><div class="pp-lbl">Data Final</div><div class="pp-date-wrap"><input class="pp-input" readonly><span class="pp-cal">&#128197;</span></div></div>'
+    +'<button class="pp-consultar">Consultar</button>'
+    +'</div>'
+    +'<table class="pp-list"><thead><tr><th>Data<span class="pp-sort">&#709;</span></th><th>Pontos utilizados<span class="pp-sort">&#709;</span></th><th>Detalhamento<span class="pp-sort">&#709;</span></th><th>Canal<span class="pp-sort">&#709;</span></th></tr></thead><tbody></tbody></table>';
+  /* 4 — Resgate de pontos: picklist única (print 11_41_15) */
+  var resgateBody='<div style="position:relative"><select class="pp-select" onchange="if(this.value)da(\'ppInfo\',this.value)">'
+    +'<option value="">Selecione o tipo de resgate</option>'
+    +'<option value="milhas">Milhas Smiles</option>'
+    +'<option value="voucher">Voucher / Vale-compras</option>'
+    +'<option value="cashback">Cashback em conta</option>'
+    +'</select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#706e6b;pointer-events:none">&#9660;</span></div>';
+  /* 5 — Extrato consolidado: olho no título + 7 linhas Descrição/Pontos mascarados (prints 11_41_32/44) */
+  var consolVals=S.ppShow['extConsol']?['25.400','16.500','0','3.200','150','1.000','6.850']:['****','****','****','****','****','****','****'];
+  var consolLabels=['Pontos Ganhos','Resgatados','Cancelados','Expirados','Ajustados','Bonificados','Saldo total'];
+  var consolRows=consolLabels.map(function(l,i){
+    return '<div class="pp-consol-row"><div class="pp-consol-l" style="flex:1">'+l+'</div>'
+      +'<div style="flex:1;max-width:170px"><input class="pp-input masked" readonly value="'+consolVals[i]+'"></div></div>';
+  }).join('');
+  var extConsolBody='<div class="pp-consol-hdr"><span style="flex:1">Descri&#231;&#227;o</span><span style="flex:1;max-width:170px">Pontos</span></div>'+consolRows;
+  /* 6 — Extrato detalhado: olho + info no título + 2 datas + Consultar + grid 6 col (prints 11_41_32/44) */
+  var extDetalhBody='<div style="display:flex;gap:16px;margin-bottom:10px">'
+    +'<div class="pp-date-fld"><div class="pp-lbl">Data Inicial</div><div class="pp-date-wrap"><input class="pp-input" readonly><span class="pp-cal">&#128197;</span></div></div>'
+    +'<div class="pp-date-fld"><div class="pp-lbl">Data Final</div><div class="pp-date-wrap"><input class="pp-input" readonly><span class="pp-cal">&#128197;</span></div></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="pp-consultar">Consultar</button></div>'
+    +'<table class="pp-list"><thead><tr><th>Data<span class="pp-sort">&#709;</span></th><th>Descri&#231;&#227;o<span class="pp-sort">&#709;</span></th><th>Valor<span class="pp-sort">&#709;</span></th><th>Cota&#231;&#227;o do d&#243;lar do dia<span class="pp-sort">&#709;</span></th><th>Pontos Acumulados<span class="pp-sort">&#709;</span></th><th>Tipo de transa&#231;&#227;o<span class="pp-sort">&#709;</span></th></tr></thead><tbody></tbody></table>';
+  /* 7 — Rastreamento de pedidos: SEM olho no título + grid com bordas + coluna olho (print 11_41_44) */
+  var rastreioBody='<table class="pp-track"><thead><tr><th>Data</th><th>N&#250;mero do pedido</th><th>Parceiro</th><th>Produto/Servi&#231;o</th><th>Pontos resgatados</th><th>Status</th><th style="width:44px"></th></tr></thead>'
+    +'<tbody><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td><span class="pp-eye-btn" onclick="da(\'ppInfo\',\'rastreio-eye\')">&#128065;</span></td></tr></tbody></table>';
+  /* BO1 — Resgate Manual de Pontos - Parceiro Smiles */
+  var boResgateBody='<div style="max-width:640px">'
+    +'<div style="margin-bottom:10px"><div class="pp-lbl">CPF do Cliente</div>'
+    +'<input class="pp-input" readonly value="'+esc(CLIENTE.cpfInput)+'"></div>'
+    +'<div style="margin-bottom:10px"><div class="pp-lbl">Valor do Resgate - Min 20.000 pts</div>'
+    +'<input id="ppValor" class="pp-input" inputmode="numeric" placeholder="Ex.: 20.000" oninput="ppValidaValor(this)">'
+    +'<div class="pp-hint">Somente n&#250;meros. Valor m&#237;nimo: 20.000 pts.</div>'
+    +'<div id="ppValorErr" class="pp-err">Valor m&#237;nimo para resgate: 20.000 pts.</div></div>'
+    +'<div><div class="pp-lbl">Coment&#225;rio</div>'
+    +'<textarea id="ppComent" class="pp-input" maxlength="250" placeholder="Digite o coment&#225;rio (m&#225;x. 250 caracteres)" oninput="document.getElementById(\'ppComentCount\').textContent=this.value.length+\'/250\'"></textarea>'
+    +'<div id="ppComentCount" class="pp-count">0/250</div></div>'
+    +'<div id="ppBoMsg" style="margin-top:8px"></div>'
+    +'<div class="pp-btn-row"><button class="pp-btn-cancel" onclick="ppBoCancel()">Cancelar</button><button class="pp-btn-exec" onclick="ppBoExec()">Executar</button></div>'
+    +'<div id="ppBoReqWrap" style="margin-top:10px;'+(S.ppBoReqId?'':'display:none')+'"><div class="pp-lbl">Id da solicita&#231;&#227;o</div><div class="pp-input pp-req-id" id="ppBoReqId">'+(S.ppBoReqId||'')+'</div></div>'
+    +'</div>';
+  /* BO2 — Historico de Resgate Manual (API por CPF) */
+  var boHistRows=(S.ppBoHist||[]).map(function(r){
+    var sel=S.ppBoSelId===r.id;
+    return '<tr'+(sel?' style="background:#eaf5fe"':'')+'><td>'+r.dt+'</td><td class="pp-req-id">'+r.id+'</td>'
+      +'<td style="text-align:center;width:44px"><span class="pp-eye-btn" title="Ver detalhe" onclick="event.stopPropagation();da(\'ppBoSel\',\''+r.id+'\')">&#128269;</span></td></tr>';
+  }).join('');
+  if(!boHistRows)boHistRows='<tr><td colspan="3" style="text-align:center;color:#706e6b;font-style:italic">Nenhuma solicita&#231;&#227;o encontrada para este CPF.</td></tr>';
+  var boHistBody='<div style="max-width:640px;margin-bottom:10px"><div class="pp-lbl">CPF do Cliente (chave da consulta)</div>'
+    +'<input class="pp-input" readonly value="'+esc(CLIENTE.cpfInput)+'"></div>'
+    +'<table class="pp-list"><thead><tr><th>Data e Hora da Solicita&#231;&#227;o</th><th>ID da Solicita&#231;&#227;o de Resgate</th><th style="width:44px"></th></tr></thead>'
+    +'<tbody>'+boHistRows+'</tbody></table>';
+  /* BO3 — Detalhes do Resgate Manual (abre via lupa) */
+  var det=S.ppBoDet;
+  var boDetBody;
+  if(!det){
+    boDetBody='<p style="font-size:11px;color:#706e6b;font-style:italic">Selecione uma solicita&#231;&#227;o no hist&#243;rico (lupa) para ver os detalhes.</p>';
+  }else{
+    var detPill=det.status==='PROCESSADO'?'pp-pill-green':(det.status==='PENDENTE'?'pp-pill-blue':'pp-pill-red');
+    boDetBody='<table class="pp-tbl"><tbody>'
+      +'<tr><td style="font-weight:600;width:40%">Documento</td><td>'+esc(det.document)+'</td></tr>'
+      +'<tr><td style="font-weight:600">Quantidade de Pontos</td><td>'+Number(det.amount).toLocaleString('pt-BR')+' pts</td></tr>'
+      +'<tr><td style="font-weight:600">Coment&#225;rio</td><td>'+esc(det.comments)+'</td></tr>'
+      +'<tr><td style="font-weight:600">Status</td><td><span class="pp-pill '+detPill+'">'+esc(det.status)+'</span></td></tr>'
+      +'<tr><td style="font-weight:600">Data da Transa&#231;&#227;o</td><td>'+ppBoFmtDt(det.transaction_date)+'</td></tr>'
+      +'</tbody></table>';
+  }
+  return '<div class="pp-hdr"><div class="pp-hdr-icon">&#127775;</div><div class="pp-hdr-title">Programa de Relacionamento - Portoplus</div></div>'
+    +ppAcc('saldo','green','&#128176;','Saldo de Pontos',false,false,saldoBody)
+    +ppAcc('expirar','pink','&#9201;','Pontos a Expirar',true,false,expirarBody)
+    +ppAcc('historico','green','&#128722;','Hist&#243;rico de Resgates',true,false,historicoBody)
+    +ppAcc('resgate','pink','&#127873;','Resgate de pontos',false,false,resgateBody)
+    +ppAcc('extConsol','blue','&#128196;','Extrato de pontos consolidado',true,false,extConsolBody)
+    +ppAcc('extDetalh','blue','&#128196;','Extrato de pontos detalhado',true,true,extDetalhBody)
+    +ppAcc('rastreio','green','&#128665;','Rastreamento de pedidos',false,false,rastreioBody)
+    +'<div class="pp-bo-hdr"><div class="pp-bo-icon">&#127873;</div><div><div class="pp-bo-title">Resgate de Pontos Portoplus - Backoffice</div><div class="pp-bo-sub">Programa Smiles</div></div></div>'
+    +'<div id="ppBoAcc">'
+    +ppAcc('boResgate','navy','&#9995;','Resgate Manual de Pontos - Parceiro Smiles',false,false,boResgateBody)
+    +ppAcc('boHist','navy','&#128336;','Historico de Resgate Manual de Pontos - Parceiro Smiles',false,false,boHistBody)
+    +ppAcc('boDet','navy','&#128269;','Detalhes do Resgate Manual de Pontos - Parceiro Smiles',false,false,boDetBody)
+    +'</div>';
+}
+
+/* ── TAB CONTENT ───────────────────────────────────────────────────── */
+function renderTabContent(){
+  if(EXT.render[S.tab2])return EXT.render[S.tab2]();
+  if(S.tab2==='detalhes'&&EXT.render[S.tab3])return EXT.render[S.tab3]();
+  if(S.tab2==='portoplus')return renderPortoplus();
+  if(S.tab4==='parcelamento')return '<div id="antc">'+renderParcelamentoFatura()+'</div>';
+  if(S.tab4==='resumo'){
+    var pills=PERIODOS.map(function(p,i){return '<div class="pill'+(i===S.periodIdx?' sel':'')+'" onclick="da(\'selPeriodo\',\''+i+'\')">'+esc(p)+'</div>';}).join('');
+    return '<div class="pill-row">'+pills+'</div><div class="fgrid">'+fld('C&#243;digo de Barras','&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;')+fld('Vencimento da Fatura','17/06/2026')+fld('Valor Total da Fatura','R$ 24,50')+fld('Valor Pagamento M&#237;nimo','R$ 24,50')+fld('Modo de Recebimento','Correios')+fld('Saldo Anterior','R$ 24,50')+fld('Pagamento/Cr&#233;ditos','R$ 24,50')+fld('Encargos','R$ 0,00')+fld('Juros','R$ 0,00')+fld('Multa por Atraso','R$ 0,00')+'</div><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn-navy" style="font-size:11px;padding:4px 10px">2&#170; Via</button><button class="btn-navy" style="font-size:11px;padding:4px 10px">Visualizar</button></div>';
+  }
+  if(S.tab4==='historico'){
+    var rows=[['17/06/2026','R$ 24,50','R$ 24,50','15/06/2026','16/06/2026','R$ 24,50'],['17/05/2026','R$ 24,50','R$ 24,50','18/05/2026','19/05/2026','R$ 24,50'],['17/04/2026','R$ 24,50','R$ 24,50','13/04/2026','14/04/2026','R$ 24,50'],['17/10/2025','R$ 61,50','R$ 26,35','15/10/2025','16/10/2025','R$ 61,50']].map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('');
+    return '<p style="font-size:12px;font-weight:600;color:#3e3e3c;margin-bottom:3px">Hist&#243;rico de Pagamentos</p><p style="font-size:11px;color:#706e6b;margin-bottom:10px">Valores de at&#233; os 12 &#250;ltimos pagamentos:</p><div class="tw"><table class="ot"><thead><tr><th>Dia Vencimento</th><th>Valor Total</th><th>Valor M&#237;nimo</th><th>Dia Efetivo Pgto</th><th>Dia do Lan&#231;amento</th><th>Valor Pagamento</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
+  return '<p style="font-size:11px;color:#706e6b;font-style:italic;padding:14px 0">Conte&#250;do da aba em exibi&#231;&#227;o.</p>';
+}
+
+/* ── MAIN SCREEN ───────────────────────────────────────────────────── */
+function renderMain(){
+  var c=CARTOES[S.cartaoIdx];
+  var T2=[['detalhes','Detalhes da Conta'],['massificados','Massificados'],['ofertas','Ofertas personalizadas'],['retencao','Reten&#231;&#227;o'],['conect','ConectCar'],['autorizacoes','Autoriza&#231;&#245;es'],['fraude','Fraude e Desacordo'],['contestacoes','Demais Contesta&#231;&#245;es'],['portoplus','Portoplus'],['limite','Limite de Cr&#233;dito'],['ajustes','Ajustes monet&#225;rios']];
+  var T3=[['fatura','Fatura'],['manutencao','Manuten&#231;&#227;o da Conta'],['troca','Troca de Representante'],['manuCar','Manuten&#231;&#227;o do Cart&#227;o'],['dossie','Consulta Dossi&#234;'],['viagem','Aviso de Viagem'],['bloq','Bloq/Desbloq Comunica&#231;&#227;o']];
+  T2=T2.concat(EXT.tabs2);T3=T3.concat(EXT.tabs3);
+  var t2=T2.map(function(x){return '<button class="ti ti-lg'+(S.tab2===x[0]?' act':'')+'" onclick="da(\'t2\',\''+x[0]+'\')">'+x[1]+'</button>';}).join('');
+  var t3=T3.map(function(x){return '<button class="ti'+(S.tab3===x[0]?' act':'')+'" onclick="da(\'t3\',\''+x[0]+'\')">'+x[1]+'</button>';}).join('');
+  var ddHtml=S.showDD?'<div class="cs-dd">'+CARTOES.map(function(cc,i){return '<button class="cs-dd-item'+(i===S.cartaoIdx?' sel':'')+'" onclick="da(\'selC\',\''+i+'\')">'+(i===S.cartaoIdx?'&#10003; ':'')+esc(cc.label)+'</button>';}).join('')+'</div>':'';
+  var cardBrand=c.tipo==='visa'?'<span style="color:white;font-size:9px;font-weight:bold;font-style:italic">VISA</span>':'<span style="color:white;font-size:9px;font-weight:bold">MC</span>';
+  var isPP=(S.tab2==='portoplus'||!!EXT.render[S.tab2]);
+  var ppPage='<div id="tabContent">'+renderTabContent()+'</div>';
+  var stdPage='<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">'
+        +'<div class="cs-wrap"><div style="font-size:11px;color:#706e6b;margin-bottom:2px">Selecione a conta</div>'
+        +'<button class="cs-btn" onclick="da(\'togDD\',\'\')"><span style="flex:1;text-align:left">'+esc(c.label)+'</span> &#9660;</button>'+ddHtml+'</div>'
+        +'<div class="card-img"><div style="display:flex;justify-content:space-between"><span style="color:white;font-size:8px;font-weight:bold">Banco Exemplo</span><div style="width:14px;height:14px;background:rgba(255,255,255,0.2);border-radius:50%"></div></div><div style="text-align:right">'+cardBrand+'</div></div>'
+      +'</div>'
+      +'<div class="sec-hdr"><div class="sec-ico">&#8801;</div><span style="font-size:13px;font-weight:600;color:#3e3e3c">Dados da conta '+esc(c.label)+'</span></div>'
+      +'<div class="fgrid">'+fld('N&#250;mero do Cart&#227;o','*****')+fld('Grupo Afinidade',S.cartaoIdx===0?'1-PADR&#195;O':'101-PADR&#195;O 2&#170; BANDEIRA')+fld('Status da Conta Bloq1',S.cartaoIdx===0?'A-Inatividade':'Ativo Bloq1 Branco',S.cartaoIdx===1)+fld('&#218;ltima Atualiza&#231;&#227;o','08/11/2024')+fld('Status da Conta Bloq2','Ativo Bloq2 Branco',true)+fld('&#218;ltima Atualiza&#231;&#227;o','19/05/2026')+fld('Status do cart&#227;o (Bloq Pl&#225;stico Tit)',S.cartaoIdx===0?'F - Falsificado/Fraude':'M - Envio Correio/Bloqueado')+fld('&#218;ltima Atualiza&#231;&#227;o','15/10/2024')+fld('Limite de Cr&#233;dito Total','*****')+fld('Limite de Cr&#233;dito Dispon&#237;vel','*****')+fld('Dia de Vencimento da Fatura','*****')+fld('Melhor data para compra','11/07/2026')+fld('Modo de Recebimento','Email')+fld('D&#233;bito em Conta?','N&#227;o')+fld('Data de Abertura da Conta','04/09/2023')+fld('Dias em atraso','0')+'</div>'
+      +'<div class="tab-bar" style="margin:0 -14px;padding:0 14px">'+t3+'</div>'
+      +'<div id="tabContent">'+renderTabContent()+'</div>';
+  return '<div class="app">'+renderTopNav()
+    +'<div class="rectab"><div class="rectab-item">&#128100; '+esc(CLIENTE.nome.split(' ').slice(0,2).join(' ').toUpperCase())+'... <span style="color:#706e6b;font-size:10px;margin-left:3px">&#10005;</span></div></div>'
+    +'<div class="layout">'+renderSidebar()
+    +'<div class="main"><div class="tab-bar"><button class="ti ti-lg" style="color:#3e3e3c;border-bottom:2px solid #3e3e3c">Cart&#227;o Banco Exemplo</button><button class="ti ti-lg">Conta Digital</button><button class="ti ti-lg">Cons&#243;rcio</button></div>'
+    +'<div class="cp">'
+      +'<div class="tab-bar" style="margin:0 -14px 14px;padding:0 14px">'+t2+'</div>'
+      +(isPP?ppPage:stdPage)
+    +'</div></div></div></div>';
+}
+
+/* ── ACTION HANDLER ────────────────────────────────────────────────── */
+var NAV_ACTIONS=['buscarCliente','selProduto','voltarM1','voltarM2','selConta','avancar','t2','t3','t4','togDD','selC','selPeriodo'];
+
+function partialUpdateAntc(){var el=document.getElementById('antc');if(el){el.innerHTML=renderParcelamentoFatura();return true;}return false;}
+function partialUpdateTabContent(){var el=document.getElementById('tabContent');if(el){el.innerHTML=renderTabContent();return true;}return false;}
+function ppValidaValor(el){var raw=String(el.value||'').replace(/\D/g,'');var err=document.getElementById('ppValorErr');if(raw===''){if(err)err.style.display='none';el.style.borderColor='#dddbda';return;}var n=parseInt(raw,10);if(isNaN(n)||n<20000){if(err)err.style.display='block';el.style.borderColor='#c23934';}else{if(err)err.style.display='none';el.style.borderColor='#04844b';}}
+function ppUuid(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;var v=c==='x'?r:(r&0x3|0x8);return v.toString(16);});}
+function ppBoApiHist(cpf){return [{dt:'10/09/2026 14:32:10',id:'631e34d0-958d-4e17-b0eb-3e3bf8cff100'},{dt:'02/09/2026 09:15:44',id:'a3f1c2b4-9d4e-4f56-8abc-1def23456789'},{dt:'28/08/2026 17:05:02',id:'7b9e8d7c-55aa-4a12-8f34-67890abcdef1'}];}
+function ppBoApiDet(id){
+  var base={'631e34d0-958d-4e17-b0eb-3e3bf8cff100':{document:'12345678901',amount:5000,comments:'Regularização manual devido à falha na transferência de pontos.',status:'PROCESSADO',transaction_date:'2026-09-11T10:27:19'}};
+  if(base[id])return base[id];
+  if(id==='a3f1c2b4-9d4e-4f56-8abc-1def23456789')return {document:'12345678901',amount:20000,comments:'Resgate manual solicitado pelo cliente via backoffice.',status:'PENDENTE',transaction_date:'2026-09-02T09:15:44'};
+  return {document:'12345678901',amount:25000,comments:'Resgate manual de pontos do parceiro Smiles.',status:'PROCESSADO',transaction_date:'2026-08-28T17:05:02'};
+}
+function ppBoFmtDt(iso){var p=String(iso||'').split('T');if(p.length<2)return iso;var d=p[0].split('-');return d[2]+'/'+d[1]+'/'+d[0]+' '+p[1];}
+function ppToast(msg){var old=document.getElementById('ppToast');if(old&&old.parentNode)old.parentNode.removeChild(old);var t=document.createElement('div');t.id='ppToast';t.className='pp-toast';t.innerHTML='<span>&#10003;</span><span>'+msg+'</span>';document.body.appendChild(t);setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},4000);}
+function ppBoCancel(){S.ppBoReqId=null;da('ppAcc','boResgate');}
+function ppBoExec(){var v=document.getElementById('ppValor');var m=document.getElementById('ppBoMsg');var raw=v?String(v.value||'').replace(/\D/g,''):'';var n=parseInt(raw,10);if(raw===''||isNaN(n)||n<20000){if(v)ppValidaValor(v);if(m)m.innerHTML='<div class="al al-e">Informe um valor de no m&#237;nimo 20.000 pts para executar o resgate.</div>';return;}if(m)m.innerHTML='';var id=ppUuid();S.ppBoReqId=id;var w=document.getElementById('ppBoReqWrap');if(w)w.style.display='block';var r=document.getElementById('ppBoReqId');if(r)r.textContent=id;ppToast('Solicita&#231;&#227;o de resgate enviada com sucesso.');}
+
+function da(a,d){
+  if(EXT.actions[a]){EXT.actions[a](d);render();return;}
+  if(a==='buscarCliente')S.tela='modal1';
+  else if(a==='selProduto')S.tela='modal2';
+  else if(a==='voltarM1')S.tela='home';
+  else if(a==='voltarM2')S.tela='modal1';
+  else if(a==='selConta')S.contaSel=parseInt(d);
+  else if(a==='avancar'){S.cartaoIdx=S.contaSel;S.tela='main';S.tab4='parcelamento';S.showAntecipacao=false;}
+  else if(a==='t2')S.tab2=d;
+  else if(a==='t3')S.tab3=d;
+  else if(a==='t4'){S.tab4=d;S.showAntecipacao=false;}
+  else if(a==='togDD')S.showDD=!S.showDD;
+  else if(a==='selC'){S.cartaoIdx=parseInt(d);S.showDD=false;}
+  else if(a==='selPeriodo')S.periodIdx=parseInt(d);
+  else if(a==='showAntecipacao'){S.showAntecipacao=true;S.step=1;S.parc=null;S.modal=null;S.conf=null;S.parcSel=null;S.selNums=[];}
+  else if(a==='hideAntecipacao')S.showAntecipacao=false;
+  else if(a==='selParc'){S.parcSel=PARCELAMENTOS.filter(function(p){return p.id===parseInt(d);})[0]||null;}
+  else if(a==='confirmarSelParc'){if(S.parcSel){S.parc=S.parcSel;S.step=2;S.showAll=false;}}
+  else if(a==='toggleAll')S.showAll=!S.showAll;
+  else if(a==='escolherModal'){S.modal=d;S.step=3;S.selNums=[];}
+  else if(a==='togParcela'){var num=parseInt(d);var idx=S.selNums.indexOf(num);if(idx>=0)S.selNums.splice(idx,1);else S.selNums.push(num);}
+  else if(a==='voltarStep'){if(S.step===2)S.step=1;else if(S.step===3)S.step=2;else if(S.step===4)S.step=3;}
+  else if(a==='confirmarTotal'){
+    var p=S.parc,sd=getSaldo(p);
+    var av=getEmAberto(p);
+    var vAmort=sd.valorAmortz;
+    var vSeg=p.seguro*av.length;
+    S.conf={tipo:'total',valor:vAmort+vSeg,valorAmort:vAmort,valorSeguro:vSeg,economia:sd.juros,parcelas:av.map(function(r){return r.num;})};
+    S.step=4;
+  }
+  else if(a==='confirmarParcial'){
+    if(S.selNums.length===0)return;
+    var tab2=calcPrice(S.parc.principal,S.parc.taxa,S.parc.n,S.parc.data);
+    var selR=tab2.filter(function(r){return S.selNums.indexOf(r.num)>=0;});
+    var vA=selR.reduce(function(s,r){return s+r.amort;},0);
+    var vJ=selR.reduce(function(s,r){return s+r.juros;},0);
+    var vSg=S.parc.seguro*selR.length;
+    S.conf={tipo:'parcial',parcelas:S.selNums.slice().sort(function(a,b){return a-b;}),valor:vA+vSg,valorAmort:vA,valorSeguro:vSg,economia:vJ};
+    S.step=4;
+  }
+  else if(a==='finalizar')S.step=5;
+  else if(a==='resetFlow'){S.step=1;S.parc=null;S.modal=null;S.conf=null;S.parcSel=null;S.selNums=[];S.showAll=false;}
+  else if(a==='ppAcc'){S.portoplusAcc[d]=!S.portoplusAcc[d];if(d==='boHist'&&S.portoplusAcc[d]&&S.ppBoHistCpf!==CLIENTE.cpfInput){S.ppBoHist=ppBoApiHist(CLIENTE.cpfInput);S.ppBoHistCpf=CLIENTE.cpfInput;}partialUpdateTabContent();return;}
+  else if(a==='ppBoSel'){S.ppBoSelId=d;S.ppBoDet=ppBoApiDet(d);S.portoplusAcc['boDet']=true;partialUpdateTabContent();return;}
+  else if(a==='ppEye'){S.ppShow[d]=!S.ppShow[d];partialUpdateTabContent();return;}
+  else if(a==='ppInfo'){/* placeholder - info icons */}
+
+  if(NAV_ACTIONS.indexOf(a)>=0){render();}
+  else{if(!partialUpdateAntc())render();}
+}
+
+function render(){
+  if(S.tela==='main'){document.getElementById('root').innerHTML=renderMain();}
+  else{document.getElementById('root').innerHTML=renderHome();}
+}
+render();
+
+/* JORNADA:INICIO */
+/* (vazio no template — a jornada da demanda é escrita aqui) */
+/* JORNADA:FIM */
+
+/* PROTO:RESET — volta ao estado inicial (usado pelo roteiro de validação e pelas capturas de tela) */
+var S0=JSON.parse(JSON.stringify(S,function(k,v){return v;}));
+window.PROTO_RESET=function(){var k;for(k in S)delete S[k];Object.assign(S,JSON.parse(JSON.stringify(S0)));try{EXT.reset();}catch(e){}render();};
+window.PROTO_DO=function(a,d){da(a,d===undefined?'':d);};
+</script>
+</body>
+</html>

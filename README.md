@@ -13,7 +13,7 @@ Base: [elephant-goldfish-model](https://github.com/google/elephant-goldfish-mode
 | 5–6 Revisão goldfish e resolução | 5 revisores `sf-disc-*` (somente leitura) | `consolidated_review_report.md`, `review_log.json` |
 | 7 Publicação | `/sf-backlog-publish <rodada>` | `publish_plan.md` → aprovação da PO → Jira + `jira-map.json` |
 | 8 Ponte Designer | `scripts/handoff-designer.mjs` | linhas em `docs/sdd/BACKLOG.md` + `spec.md` semente (só negócio) |
-| Entregas para o negócio | `/sf-po-pack <rodada>` | entrevista de múltipla escolha → **Word** (Visão de Produto), **PowerPoint** e **protótipo HTML clicável** com o design system padrão do Service Cloud (SLDS) |
+| Entregas para o negócio | `/sf-po-pack <rodada>` | entrevista de múltipla escolha → **Word** (Visão de Produto), **PowerPoint** e **protótipo HTML clicável derivado do template do console da equipe** (referência obrigatória; a jornada da demanda é acrescentada ou ajustada nele) |
 | Status | `/sf-discovery-status` | situação por rodada |
 
 ## Para quem é cada entrega
@@ -29,7 +29,7 @@ Base: [elephant-goldfish-model](https://github.com/google/elephant-goldfish-mode
 - **LGPD**: CPF/CNPJ/e-mail/telefone formatados são mascarados na entrada; falantes pseudonimizados; `discovery/` fora do git.
 
 ## O que NÃO foi verificado aqui
-O protótipo usa o SLDS oficial (BSD-3), mas é referência visual: não é LWC, não roda no Salesforce e não substitui o desenho do Journey Designer. Nome do servidor e das ferramentas reais do MCP do Jira, templates/campos reais do Jira, sessão real com a PO e execução ao vivo dos revisores. Ver `docs/open-decisions.md`.
+O protótipo é a réplica HTML do console (template da PO), não o Salesforce real: não é LWC, não roda no Salesforce e não substitui o desenho do Journey Designer. Nome do servidor e das ferramentas reais do MCP do Jira, templates/campos reais do Jira, sessão real com a PO e execução ao vivo dos revisores. Ver `docs/open-decisions.md`.
 
 ## Testes
 `node scripts/verify-skills.mjs && node --test tests/core.test.mjs tests/jira.test.mjs`

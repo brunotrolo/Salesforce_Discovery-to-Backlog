@@ -1,0 +1,31 @@
+{
+  "$comment": "proto_meta.json: metadados do protótipo derivado do template do console (referência obrigatória). Vai embutido no HTML (#proto-meta).",
+  "type": "object",
+  "required": ["title", "stories", "brief", "walkthrough"],
+  "properties": {
+    "title": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string" },
+    "stories": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^US-\\d{3}$" } },
+    "brief": {
+      "type": "object", "required": ["change_kind", "insertion"],
+      "properties": {
+        "change_kind": { "enum": ["nova-jornada", "ajuste-existente"] },
+        "existing_target": { "type": "string" },
+        "insertion": { "enum": ["nova-aba-n2", "nova-aba-conta", "wizard-em-aba-existente", "home-busca", "outro"] },
+        "fidelity": { "type": "string" }, "scenarios": { "type": "string" }, "audience": { "type": "string" }
+      }
+    },
+    "assumptions": { "type": "array", "items": { "type": "string" } },
+    "walkthrough": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["id", "title", "text", "run"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" }, "title": { "type": "string", "minLength": 1 }, "text": { "type": "string", "minLength": 1 },
+          "covers": { "type": "array", "items": { "type": "string", "pattern": "^US-\\d{3}#\\d+$" } },
+          "run": { "type": "array", "items": { "type": "array", "minItems": 1 } }
+        }
+      }
+    }
+  }
+}

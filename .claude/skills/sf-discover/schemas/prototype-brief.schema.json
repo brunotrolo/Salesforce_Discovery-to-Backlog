@@ -1,15 +1,71 @@
 {
   "$comment": "Respostas da entrevista com a PO sobre o protótipo. Gravado em discovery/<rodada>/entregas/prototype_brief.json antes de desenhar.",
   "type": "object",
-  "required": ["needed", "asked_at"],
+  "required": [
+    "needed",
+    "asked_at"
+  ],
   "properties": {
-    "needed": { "enum": ["sim", "nao-agora", "depois"] },
-    "asked_at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-    "scope": { "type": "array", "items": { "type": "string" }, "description": "ids de histórias/épicos a prototipar" },
-    "screen_type": { "enum": ["registro-caso", "busca-resultado", "fluxo-guiado", "lista-fila", "outro"] },
-    "fidelity": { "enum": ["tela-unica", "fluxo-3-5-telas", "fluxo-completo-com-variacoes"] },
-    "scenarios": { "enum": ["caminho-feliz", "feliz-e-erro", "feliz-erro-e-lgpd"] },
-    "audience": { "enum": ["validacao-negocio", "alinhamento-ti", "demo-executiva"] },
-    "other_notes": { "type": "string" }
+    "needed": {
+      "enum": [
+        "sim",
+        "nao-agora",
+        "depois"
+      ]
+    },
+    "asked_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "ids de histórias/épicos a prototipar"
+    },
+    "fidelity": {
+      "enum": [
+        "tela-unica",
+        "fluxo-3-5-telas",
+        "fluxo-completo-com-variacoes"
+      ]
+    },
+    "scenarios": {
+      "enum": [
+        "caminho-feliz",
+        "feliz-e-erro",
+        "feliz-erro-e-lgpd"
+      ]
+    },
+    "audience": {
+      "enum": [
+        "validacao-negocio",
+        "alinhamento-ti",
+        "demo-executiva"
+      ]
+    },
+    "other_notes": {
+      "type": "string"
+    },
+    "change_kind": {
+      "enum": [
+        "nova-jornada",
+        "ajuste-existente"
+      ]
+    },
+    "existing_target": {
+      "type": "string",
+      "description": "qual jornada/tela existente será ajustada"
+    },
+    "insertion": {
+      "enum": [
+        "nova-aba-n2",
+        "nova-aba-conta",
+        "wizard-em-aba-existente",
+        "home-busca",
+        "outro"
+      ]
+    }
   }
 }

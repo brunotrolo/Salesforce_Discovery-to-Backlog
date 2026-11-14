@@ -11,5 +11,5 @@
 6. **PII.** Só leia fontes normalizadas por `ingest.mjs` (PII formatada mascarada). Nunca abra o arquivo original de transcrição nem o `speakers.map.json`.
 7. **Jira é escrita controlada.** Nada é criado ou editado sem `publish_plan.approved.json` (aprovação explícita da PO). Nunca exclua, nunca transicione status.
    Template provisório = não publica. Detalhes em `.claude/rules/jira-write.md`.
-8. **Entregas para o negócio em formato de negócio.** A PO compartilha com áreas de negócio: Word, PowerPoint e protótipo HTML (SLDS do Service Cloud, dados fictícios). Artefatos para o time técnico ficam em Markdown. **Sempre pergunte** à PO, em múltipla escolha, se ela precisa do protótipo (`/sf-po-pack`), a cada rodada.
+8. **Entregas para o negócio em formato de negócio.** A PO compartilha com áreas de negócio: Word, PowerPoint e protótipo HTML (derivado do template do console, dados fictícios). Artefatos para o time técnico ficam em Markdown. O protótipo **parte sempre do template do console** (`references/prototype-template/`, referência obrigatória; só a jornada da demanda é acrescentada/ajustada). **Sempre pergunte** à PO, em múltipla escolha, se ela precisa do protótipo (`/sf-po-pack`), a cada rodada.
 9. **Escopo.** Não estime pontos, não priorize roadmap, não crie sprints, não projete solução técnica (isso é do Journey Designer/Developer).

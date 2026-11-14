@@ -180,3 +180,41 @@ p=Presentation('${out}/Apresentacao-Rodada.pptx'); assert len(p.slides)>=5
 `], { encoding: 'utf8' });
   assert.equal(chk.status, 0, chk.stderr);
 });
+
+// ---- Protótipo derivado do template do console (referência obrigatória)
+const { build } = await import(`../${S}/new-prototype.mjs`);
+const { checkHtml, templateActions } = await import(`../${S}/check-prototype-html.mjs`);
+const meta = JSON.parse(readFileSync('tests/fixtures/proto_meta.ok.json', 'utf8'));
+const journeyJs = readFileSync('tests/fixtures/journey.sample.js', 'utf8');
+const withJourney = (html, js = journeyJs) => html.replace('/* JORNADA:INICIO */', () => `/* JORNADA:INICIO */\n${js}`);
+
+test('template do console: sem PII, sem rede, e reprovado até a jornada existir', () => {
+  const html = build(meta); const r = checkHtml(html, bl);
+  assert.ok(r.errors.some((e) => /JORNADA vazio/.test(e)));
+  assert.ok(!r.errors.some((e) => /fidelidade|PII|autocontido/.test(e)), r.errors.join(';'));
+  assert.ok(templateActions(readFileSync(`${S}/../references/prototype-template/template.html`, 'utf8')).has('buscarCliente'));
+});
+
+test('protótipo do template com jornada: aprovado; roteiro cobre o aceite', () => {
+  const r = checkHtml(withJourney(build(meta)), bl);
+  assert.equal(r.ok, true, r.errors.join(';')); assert.deepEqual(r.warnings, []);
+});
+
+test('protótipo do template: reprova alteração fora da jornada, ação inexistente, rede e PII', () => {
+  const ok = withJourney(build(meta));
+  assert.ok(checkHtml(ok.replace('function renderSidebar()', 'function renderSidebar2()'), bl).errors.some((e) => /fidelidade/.test(e)));
+  assert.ok(checkHtml(ok.replace('.topnav{background:white', '.topnav{background:red'), bl).errors.some((e) => /fidelidade/.test(e)));
+  assert.ok(checkHtml(build({ ...meta, walkthrough: [{ ...meta.walkthrough[1], run: [['acaoFantasma']] }] }).replace('/* JORNADA:INICIO */', () => `/* JORNADA:INICIO */\n${journeyJs}`), bl).errors.some((e) => /acaoFantasma/.test(e)));
+  assert.ok(checkHtml(withJourney(build(meta), journeyJs + "\nfetch('x');"), bl).errors.some((e) => /autocontido/.test(e)));
+  assert.ok(checkHtml(withJourney(build(meta), journeyJs + "\nvar d='123.456.789-09';"), bl).errors.some((e) => /PII/.test(e)));
+});
+
+test('protótipo do template: jornada funciona no navegador (se Playwright existir)', async (t) => {
+  let chromium; try { ({ chromium } = (await import('node:module')).createRequire(join(process.cwd(), 'x.js'))('playwright')); } catch { return t.skip('Playwright ausente'); }
+  const f = join(mkdtempSync(join(tmpdir(), 'pw-')), 'p.html'); writeFileSync(f, withJourney(build(meta)));
+  const b = await chromium.launch(); const pg = await b.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(String(e)));
+  await pg.goto('file://' + f);
+  await pg.evaluate(() => { PROTO_RESET(); ['buscarCliente', 'selProduto', 'avancar'].forEach((a) => PROTO_DO(a)); PROTO_DO('t2', 'bscDoc'); PROTO_DO('bscBuscar'); });
+  const txt = await pg.textContent('body'); await b.close();
+  assert.deepEqual(errs, []); assert.match(txt, /Busca por documento/); assert.match(txt, /Cliente Exemplo Um/); assert.match(txt, /Roteiro de validação/);
+});
