@@ -1,0 +1,13 @@
+{
+  "$comment": "Configuração do Jira. PROVISÓRIA: nenhum valor abaixo foi definido pela equipe. Enquanto templates_status for 'provisorio', a skill NÃO publica no Jira (gera o pacote de importação).",
+  "templates_status": "provisorio",
+  "project_key": null,
+  "issue_types": { "epic": "Epic", "story": "Story", "subtask": "Sub-task" },
+  "discovery_id_field": { "mode": "label", "name": "discovery-id", "$comment": "label (padrão) ou o id de um campo customizado, quando existir" },
+  "labels": ["discovery"],
+  "components": [],
+  "custom_fields": {},
+  "priority_map": { "MUST": null, "SHOULD": null, "COULD": null, "WONT": null },
+  "templates": { "epic": "templates/jira-epic.md", "story": "templates/jira-story.md", "subtask": "templates/jira-subtask.md" },
+  "language": "pt-BR"
+}

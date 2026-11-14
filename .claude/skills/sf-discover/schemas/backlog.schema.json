@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Contrato do backlog.json (fonte canônica). Subconjunto de JSON Schema usado por scripts/lib/schema.mjs. Âncora de evidência: S01:L120-134.",
+  "type": "object",
+  "required": ["schema", "project", "rounds", "epics"],
+  "properties": {
+    "schema": { "type": "string", "enum": ["1.0"] },
+    "project": { "type": "object", "required": ["name", "updated"], "properties": { "name": { "type": "string", "minLength": 1 }, "updated": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" } } },
+    "rounds": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["id", "date", "sources"], "properties": { "id": { "type": "string", "pattern": "^R\\d{2,3}$" }, "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }, "sources": { "type": "array", "items": { "type": "string", "pattern": "^S\\d{2,3}$" } }, "participants": { "type": "array", "items": { "type": "string" } } } } },
+    "epics": { "type": "array", "items": { "$ref": "#/$defs/epic" } },
+    "conflicts": { "type": "array", "items": { "type": "object", "required": ["id", "items", "description"], "properties": { "id": { "type": "string" }, "items": { "type": "array", "items": { "type": "string" } }, "description": { "type": "string" }, "resolution": { "type": "string" } } } }
+  },
+  "$defs": {
+    "anchors": { "type": "array", "items": { "type": "string", "pattern": "^S\\d{2,3}:L\\d+(-\\d+)?$" } },
+    "question": { "type": "object", "required": ["id", "text", "kind"], "properties": { "id": { "type": "string", "pattern": "^Q-\\d{3}$" }, "text": { "type": "string", "minLength": 1 }, "kind": { "type": "string", "enum": ["negocio", "descoberta"] }, "evidence": { "$ref": "#/$defs/anchors" }, "resolved": { "type": "boolean" } } },
+    "epic": { "type": "object", "required": ["id", "title", "objective", "evidence", "status", "stories"], "properties": {
+      "id": { "type": "string", "pattern": "^E-\\d{3}$" }, "title": { "type": "string", "minLength": 1 }, "objective": { "type": "string", "minLength": 1 },
+      "domain": { "type": ["string", "null"] }, "products": { "type": "array", "items": { "type": "string" } }, "personas": { "type": "array", "items": { "type": "string" } },
+      "evidence": { "$ref": "#/$defs/anchors" }, "status": { "type": "string", "enum": ["rascunho", "revisado", "aprovado", "publicado"] },
+      "open_questions": { "type": "array", "items": { "$ref": "#/$defs/question" } },
+      "stories": { "type": "array", "items": { "$ref": "#/$defs/story" } } } },
+    "story": { "type": "object", "required": ["id", "title", "persona", "want", "so_that", "acceptance", "evidence", "status"], "properties": {
+      "id": { "type": "string", "pattern": "^US-\\d{3}$" }, "title": { "type": "string", "minLength": 1 },
+      "persona": { "type": "string", "minLength": 1 }, "want": { "type": "string", "minLength": 1 }, "so_that": { "type": "string", "minLength": 1 },
+      "acceptance": { "type": "array", "items": { "type": "object", "required": ["given", "when", "then"], "properties": { "given": { "type": "string", "minLength": 1 }, "when": { "type": "string", "minLength": 1 }, "then": { "type": "string", "minLength": 1 }, "evidence": { "$ref": "#/$defs/anchors" } } } },
+      "business_rules": { "type": "array", "items": { "type": "object", "required": ["text"], "properties": { "text": { "type": "string", "minLength": 1 }, "evidence": { "$ref": "#/$defs/anchors" } } } },
+      "evidence": { "$ref": "#/$defs/anchors" },
+      "priority": { "type": ["string", "null"], "enum": ["MUST", "SHOULD", "COULD", "WONT", null] },
+      "classification_hint": { "type": "string", "enum": ["padrao", "misto", "customizado", "desconhecido"] },
+      "domain": { "type": ["string", "null"] }, "products": { "type": "array", "items": { "type": "string" } },
+      "dependencies": { "type": "array", "items": { "type": "string", "pattern": "^US-\\d{3}$" } },
+      "compliance_flags": { "type": "array", "items": { "type": "string", "enum": ["LGPD", "regulatorio", "financeiro", "seguranca", "auditoria"] } },
+      "open_questions": { "type": "array", "items": { "$ref": "#/$defs/question" } },
+      "status": { "type": "string", "enum": ["rascunho", "revisado", "aprovado", "publicado"] },
+      "ready_for_design": { "type": "boolean" },
+      "handoff": { "type": "object", "properties": { "domain": { "type": "string" }, "capability": { "type": "string" }, "date": { "type": "string" } } },
+      "tasks": { "type": "array", "items": { "type": "object", "required": ["id", "title"], "properties": { "id": { "type": "string", "pattern": "^ST-\\d{3}$" }, "title": { "type": "string", "minLength": 1 }, "description": { "type": "string" }, "evidence": { "$ref": "#/$defs/anchors" } } } } } }
+  }
+}

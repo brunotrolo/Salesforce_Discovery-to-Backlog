@@ -1,0 +1,8 @@
+node_modules/
+# Dados de discovery (transcrições, backlog de trabalho) NUNCA entram neste repositório
+discovery/
+sources/
+speakers.map.json
+*.approved.json
+.claude/skills/sf-discover/evaluations/results/
+.DS_Store

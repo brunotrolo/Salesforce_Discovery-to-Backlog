@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Contrato de config/jira.config.json. 'oficial' exige project_key e templates existentes.",
+  "type": "object",
+  "required": ["templates_status", "issue_types", "discovery_id_field", "templates"],
+  "properties": {
+    "templates_status": { "type": "string", "enum": ["provisorio", "oficial"] },
+    "project_key": { "type": ["string", "null"], "pattern": "^[A-Z][A-Z0-9]{1,9}$" },
+    "issue_types": { "type": "object", "required": ["epic", "story", "subtask"], "properties": { "epic": { "type": "string", "minLength": 1 }, "story": { "type": "string", "minLength": 1 }, "subtask": { "type": "string", "minLength": 1 } } },
+    "discovery_id_field": { "type": "object", "required": ["mode", "name"], "properties": { "mode": { "type": "string", "enum": ["label", "custom_field"] }, "name": { "type": "string", "minLength": 1 } } },
+    "labels": { "type": "array", "items": { "type": "string" } },
+    "templates": { "type": "object", "required": ["epic", "story", "subtask"], "properties": { "epic": { "type": "string", "minLength": 1 }, "story": { "type": "string", "minLength": 1 }, "subtask": { "type": "string", "minLength": 1 } } }
+  }
+}
