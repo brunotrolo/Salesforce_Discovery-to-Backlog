@@ -7,5 +7,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
+      - run: pip install python-docx python-pptx
       - run: node scripts/verify-skills.mjs
       - run: node --test tests/core.test.mjs tests/jira.test.mjs

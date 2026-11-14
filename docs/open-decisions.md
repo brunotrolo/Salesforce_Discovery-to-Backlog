@@ -11,4 +11,6 @@ A skill funciona hoje com padrões **provisórios**; nada disto bloqueia gerar b
 | 5 | Retenção de transcrições e política LGPD (`discovery/` e `sources/` ficam fora do git) | DPO/PO | máscara de PII no ingest; pseudonimização de falantes por padrão |
 | 6 | Nomenclatura dos domínios de produtos financeiros em `DOMAINS.md` do Designer | PO + arquitetura | histórias sem domínio conhecido não passam ao Designer |
 | 7 | Fluxo de aprovação (quem aprova: só a PO? 2ª pessoa?) | PO | `approve-plan.mjs --by` registra o nome, mas o hook não prova a identidade |
+| 9 | Modelos corporativos de Word (`.docx`/`.dotx`) e PowerPoint (`.pptx`/`.potx`) e identidade visual | PO + comunicação | exporta com estilo padrão; use `--docx-template/--pptx-template` quando existirem |
+| 10 | Versão do SLDS do protótipo (hoje 2.264.3 vendorizado) e se o protótipo deve usar o tema do Salesforce da empresa | PO + design | protótipo com SLDS padrão |
 | 8 | Formatos binários (.docx/.pdf/.pptx/.xlsx): extração pelo host antes do `ingest.mjs` | engenharia | `ingest.mjs` recusa e pede extração |

@@ -137,3 +137,46 @@ test('hook: mcp_server_pattern cobre servidor do Jira com nome customizado', () 
     assert.equal(decide('mcp__outro__delete_item', {}, dir).allow, true);
   } finally { delete process.env.SFD_CONFIG; }
 });
+
+// ---- Entregas para a PO: protótipo HTML, entrevista, Word/PowerPoint
+const proto = JSON.parse(readFileSync('tests/fixtures/prototype.ok.json', 'utf8'));
+const { checkPrototype, renderHtml } = await import(`../${S}/render-prototype.mjs`);
+const { validate } = await import(`../${S}/lib/schema.mjs`);
+
+test('protótipo: válido, autocontido (sem rede), com SLDS e roteiro', () => {
+  const r = checkPrototype(proto, bl); assert.equal(r.ok, true, r.errors.join(';')); assert.deepEqual(r.warnings, []);
+  const html = renderHtml(proto, bl);
+  assert.match(html, /slds-context-bar/); assert.match(html, /PROTÓTIPO PARA VALIDAÇÃO/); assert.match(html, /Roteiro de validação/);
+  assert.equal(/(src|href)=["']https?:/.test(html), false); assert.equal(/<script[^>]+src=/.test(html), false);
+});
+
+test('protótipo: reprova goto inexistente, PII real, cenário não coberto e bloco incompleto', () => {
+  const c = (f) => { const p = JSON.parse(JSON.stringify(proto)); f(p); return checkPrototype(p, bl); };
+  assert.ok(c((p) => { p.screens[0].blocks[2].items[0].goto = 'nada'; }).errors.some((x) => /goto/.test(x)));
+  assert.ok(c((p) => { p.screens[1].blocks[0].rows[0][1] = '123.456.789-09'; }).errors.some((x) => /PII/.test(x)));
+  assert.ok(c((p) => { p.walkthrough[0].covers = []; }).warnings.some((x) => /não é coberto/.test(x)));
+  assert.ok(c((p) => { delete p.screens[1].blocks[0].columns; }).errors.some((x) => /columns/.test(x)));
+  assert.ok(c((p) => { p.stories = ['US-099']; }).errors.some((x) => /US-099/.test(x)));
+});
+
+test('prototype_brief: schema aceita resposta válida e rejeita opção inventada', () => {
+  const sch = JSON.parse(readFileSync(`${S}/../schemas/prototype-brief.schema.json`, 'utf8'));
+  assert.deepEqual(validate({ needed: 'sim', asked_at: '2026-11-14', screen_type: 'registro-caso', fidelity: 'fluxo-3-5-telas' }, sch), []);
+  assert.ok(validate({ needed: 'talvez', asked_at: '2026-11-14' }, sch).length > 0);
+});
+
+test('export Word/PowerPoint abre e traz o conteúdo de negócio (pula sem python-docx/pptx)', (t) => {
+  const has = spawnSync('python3', ['-c', 'import docx, pptx'], { encoding: 'utf8' }).status === 0;
+  if (!has) return t.skip('python-docx/python-pptx ausentes');
+  const out = mkdtempSync(join(tmpdir(), 'off-'));
+  const r = spawnSync('python3', [`${S}/export-office.py`, 'tests/fixtures/backlog.ok.json', '--out', out, '--prototype', 'tests/fixtures/prototype.ok.json'], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  const chk = spawnSync('python3', ['-c', `
+from docx import Document; from pptx import Presentation
+d=Document('${out}/Visao-de-Produto.docx'); txt=' '.join(p.text for p in d.paragraphs)
+assert 'Localizar cliente por documento' in txt and 'Decisões necessárias do negócio' in txt
+assert 'discovery-id' not in txt and 'sha256' not in txt
+p=Presentation('${out}/Apresentacao-Rodada.pptx'); assert len(p.slides)>=5
+`], { encoding: 'utf8' });
+  assert.equal(chk.status, 0, chk.stderr);
+});

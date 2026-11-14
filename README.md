@@ -13,7 +13,14 @@ Base: [elephant-goldfish-model](https://github.com/google/elephant-goldfish-mode
 | 5–6 Revisão goldfish e resolução | 5 revisores `sf-disc-*` (somente leitura) | `consolidated_review_report.md`, `review_log.json` |
 | 7 Publicação | `/sf-backlog-publish <rodada>` | `publish_plan.md` → aprovação da PO → Jira + `jira-map.json` |
 | 8 Ponte Designer | `scripts/handoff-designer.mjs` | linhas em `docs/sdd/BACKLOG.md` + `spec.md` semente (só negócio) |
+| Entregas para o negócio | `/sf-po-pack <rodada>` | entrevista de múltipla escolha → **Word** (Visão de Produto), **PowerPoint** e **protótipo HTML clicável** com o design system padrão do Service Cloud (SLDS) |
 | Status | `/sf-discovery-status` | situação por rodada |
+
+## Para quem é cada entrega
+- **Áreas de negócio (via PO):** `.docx`, `.pptx` e `.html` (o protótipo abre no navegador, offline, sem instalar nada). Linguagem de negócio, sem jargão técnico.
+- **Time técnico:** Markdown/JSON (`backlog_draft.md`, relatórios de revisão, specs do Designer).
+- A skill **sempre pergunta** se a PO precisa do protótipo e orienta o desenho com uma entrevista curta de múltipla escolha (`references/po-interview.md`).
+- Word/PowerPoint: `pip install python-docx python-pptx`. Imagens do protótipo nos arquivos: Playwright (opcional).
 
 ## Garantias (por código, não por lembrete)
 - **Sem fonte, sem requisito**: `validate-backlog.mjs` confere se cada âncora existe; `merge-extractions.mjs` confere a citação literal.
@@ -22,7 +29,7 @@ Base: [elephant-goldfish-model](https://github.com/google/elephant-goldfish-mode
 - **LGPD**: CPF/CNPJ/e-mail/telefone formatados são mascarados na entrada; falantes pseudonimizados; `discovery/` fora do git.
 
 ## O que NÃO foi verificado aqui
-Nome do servidor e das ferramentas reais do MCP do Jira, templates/campos reais do Jira, sessão real com a PO e execução ao vivo dos revisores. Ver `docs/open-decisions.md`.
+O protótipo usa o SLDS oficial (BSD-3), mas é referência visual: não é LWC, não roda no Salesforce e não substitui o desenho do Journey Designer. Nome do servidor e das ferramentas reais do MCP do Jira, templates/campos reais do Jira, sessão real com a PO e execução ao vivo dos revisores. Ver `docs/open-decisions.md`.
 
 ## Testes
 `node scripts/verify-skills.mjs && node --test tests/core.test.mjs tests/jira.test.mjs`

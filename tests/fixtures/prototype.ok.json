@@ -1,0 +1,29 @@
+{
+  "schema": "1.0", "title": "Busca de cliente no início do atendimento", "purpose": "Validar com o negócio como o atendente localiza o cliente e vê seus produtos.",
+  "stories": ["US-001"], "brief": { "audience": "validação com o negócio", "fidelity": "fluxo clicável", "scenarios": "caminho feliz + erro" },
+  "app": { "mode": "console", "name": "Service Console", "tabs": ["Início", "Busca de cliente"] },
+  "start": "busca",
+  "screens": [
+    { "id": "busca", "title": "Busca de cliente", "blocks": [
+      { "type": "alert", "tone": "info", "text": "Digite o documento do cliente. O documento nunca aparece completo na tela." },
+      { "type": "form", "title": "Buscar cliente", "fields": [{ "label": "Documento", "name": "doc", "required": true, "placeholder": "Somente números" }, { "label": "Produto", "kind": "select", "options": ["Cartão", "Conta", "Empréstimo"] }] },
+      { "type": "actions", "items": [{ "label": "Buscar", "goto": "resultado", "validate": true }] }
+    ] },
+    { "id": "resultado", "title": "Resultado da busca", "blocks": [
+      { "type": "table", "title": "Clientes encontrados", "filter": "Filtrar resultados", "columns": ["Nome", "Documento", "Produtos"], "rows": [["Cliente Exemplo Um", "•••.456.789-••", "Cartão, Conta"], ["Cliente Exemplo Dois", "•••.111.222-••", "Empréstimo"]], "rowAction": { "label": "Abrir", "goto": "registro" } }
+    ] },
+    { "id": "registro", "title": "Cliente", "layout": "registro", "blocks": [
+      { "type": "highlights", "icon": "contact", "kicker": "Cliente", "title": "Cliente Exemplo Um", "fields": [{ "label": "Segmento", "value": "Varejo" }, { "label": "Documento", "value": "•••.456.789-••" }], "actions": [{ "label": "Novo caso", "goto": "busca" }] },
+      { "type": "path", "steps": ["Identificação", "Triagem", "Resolução"], "current": 0 },
+      { "type": "tabs", "items": [{ "label": "Produtos", "text": "Cartão Exemplo (ativo); Conta Exemplo (ativa)." }, { "label": "Histórico", "text": "Último contato há 12 dias." }] },
+      { "type": "fields", "title": "Dados", "items": [{ "label": "Documento", "value": "•••.456.789-••", "masked": true }] },
+      { "type": "timeline", "items": [{ "when": "Hoje", "text": "Cliente identificado pela busca.", "icon": "check" }] },
+      { "type": "actions", "items": [{ "label": "Voltar", "variant": "neutro", "goto": "resultado" }, { "label": "Iniciar atendimento", "toast": "Atendimento iniciado (simulado)" }] }
+    ] }
+  ],
+  "walkthrough": [
+    { "screen": "busca", "text": "Informe um documento e clique em Buscar (deixe vazio para ver a validação).", "covers": ["US-001#1"] },
+    { "screen": "resultado", "text": "Veja o cliente com seus produtos e o documento mascarado." },
+    { "screen": "registro", "text": "Abra o cliente e inicie o atendimento." }
+  ]
+}

@@ -7,5 +7,5 @@ disable-model-invocation: true
 # sf-discovery-status
 
 1. Rode `node .claude/skills/sf-discover/scripts/status.mjs` e mostre a saída.
-2. Para cada rodada, sugira UM próximo passo: sem backlog → `/sf-discover`; histórias em `rascunho` → revisão/resolução; `revisado` sem aprovação → pedir aprovação da PO; plano `bloqueado` → ler `publish_plan.md`; `aprovado` + `ready_for_design` → handoff ao Designer (`handoff-designer.mjs`, dry-run primeiro).
+2. Para cada rodada, sugira UM próximo passo: sem backlog → `/sf-discover`; sem entregas para o negócio → `/sf-po-pack` (pergunte se ela quer protótipo/Word/PowerPoint); histórias em `rascunho` → revisão/resolução; `revisado` sem aprovação → pedir aprovação da PO; plano `bloqueado` → ler `publish_plan.md`; `aprovado` + `ready_for_design` → handoff ao Designer (`handoff-designer.mjs`, dry-run primeiro).
 3. Não altere nada.

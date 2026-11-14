@@ -66,7 +66,7 @@ For each Blocker/Major finding classify **PROPOSE FIX** (you agree) or **CONTEST
 
 ## Step 7 — Approval and hand-off
 
-The PO approves epics/stories (status `aprovado`). Then point to the next commands: `/sf-backlog-publish $round` (Jira, controlled), `/sf-discovery-status`, and the Designer hand-off (`references/handoff-designer.md`). Report: files written, open questions by kind, conflicts, review status.
+The PO approves epics/stories (status `aprovado`). **Always** then offer the PO deliverables by running `/sf-po-pack $round` (it opens with a short multiple-choice interview: does she need a clickable prototype? which Word/PowerPoint deliverables?) — ask even if she declined in an earlier round. Business-facing deliverables are Word/PowerPoint/HTML; technical ones stay Markdown. Then point to the next commands: `/sf-backlog-publish $round` (Jira, controlled), `/sf-discovery-status`, and the Designer hand-off (`references/handoff-designer.md`). Report: files written, open questions by kind, conflicts, review status.
 
 ## What you are not
 Not an estimator, not a roadmap prioritizer, not a solution designer, and never a writer to Jira from this skill.
