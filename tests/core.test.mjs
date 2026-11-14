@@ -94,3 +94,24 @@ test('reconcile: novo, alterado, duplicado e candidato a conflito', () => {
   assert.ok(out.conflitos.some((x) => x.candidato === 'US-003'));
   assert.equal(r.status, 3);
 });
+
+test('merge-extractions: aceita citação real, rejeita invenção, funde duplicados', () => {
+  const d = tmp(); run('ingest.mjs', [join(FX, 'sample.vtt'), '--round', 'R01', '--out', d]);
+  const ret = { source: 'S01', range: { from: 1, to: 2 }, items: [
+    { kind: 'dor', text: 'Atendente perde tempo buscando o cliente', quote: 'perde tempo', evidence: ['S01:L1'] },
+    { kind: 'dor', text: 'Atendente perde tempo buscando cliente', quote: 'perde tempo', evidence: ['S01:L1-2'] },
+    { kind: 'regra', text: 'Documento nunca aparece completo', quote: 'nunca pode aparecer completo na tela', evidence: ['S01:L2'] },
+    { kind: 'necessidade', text: 'Integração com o sistema X em tempo real', quote: 'integração em tempo real com o sistema X', evidence: ['S01:L1'] },
+  ] };
+  writeFileSync(join(d, 'r.json'), JSON.stringify(ret));
+  const r = run('merge-extractions.mjs', ['--sources', join(d, 'R01/sources'), '--out', d, join(d, 'r.json')]);
+  assert.equal(r.status, 0, r.stderr);
+  const b = JSON.parse(readFileSync(join(d, 'discovery_brief.json'), 'utf8'));
+  assert.equal(b.kept.length, 2);
+  assert.equal(b.rejected.length, 1);
+  assert.match(b.rejected[0].motivo, /citação não encontrada/);
+  assert.deepEqual(b.kept[0].evidence.sort(), ['S01:L1', 'S01:L1-2']);
+  assert.match(readFileSync(join(d, 'discovery_brief.md'), 'utf8'), /Rejeitados/);
+  writeFileSync(join(d, 'bad.json'), JSON.stringify({ source: 'S01', items: [] }));
+  assert.equal(run('merge-extractions.mjs', ['--sources', join(d, 'R01/sources'), '--out', d, join(d, 'bad.json')]).status, 2);
+});

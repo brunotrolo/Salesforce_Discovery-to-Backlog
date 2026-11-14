@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Retorno obrigatório do worker sf-disc-extractor (JSON puro). Cada item cita um trecho literal (quote) e a âncora onde ele está; merge-extractions.mjs descarta o que não bate com a fonte.",
+  "type": "object",
+  "required": ["source", "range", "items"],
+  "properties": {
+    "source": { "type": "string", "pattern": "^S\\d{2,3}$" },
+    "range": { "type": "object", "required": ["from", "to"] },
+    "items": { "type": "array", "items": { "type": "object", "required": ["kind", "text", "quote", "evidence"], "properties": {
+      "kind": { "type": "string", "enum": ["necessidade", "dor", "regra", "ator", "jornada", "restricao", "pergunta"] },
+      "text": { "type": "string", "minLength": 1 },
+      "quote": { "type": "string", "minLength": 4 },
+      "evidence": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^S\\d{2,3}:L\\d+(-\\d+)?$" } },
+      "role": { "type": "string" }, "question_kind": { "type": "string", "enum": ["negocio", "descoberta"] }
+    } } }
+  }
+}

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { validate } from './schema.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SKILL_ROOT = ROOT;
-export function loadConfig(path = join(ROOT, 'config', 'jira.config.json')) {
+export function loadConfig(path = process.env.SFD_CONFIG || join(ROOT, 'config', 'jira.config.json')) {
   const cfg = JSON.parse(readFileSync(path, 'utf8'));
   const schema = JSON.parse(readFileSync(join(ROOT, 'schemas', 'template-contract.schema.json'), 'utf8'));
   const errors = validate(cfg, schema);
