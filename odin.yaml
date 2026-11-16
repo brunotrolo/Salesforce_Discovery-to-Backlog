@@ -5,18 +5,26 @@ dominio: salesforce
 dono: mantenedor
 descricao: Transforma entrevistas, transcrições e documentos do negócio em backlog rastreável, com critérios de aceite e regras de negócio com fonte, e publica as histórias no Jira.
 intencoes:
-  - transformar a transcrição da reunião em backlog
-  - fazer o discovery com o cliente e levantar requisitos
-  - escrever as histórias de usuário com critérios de aceite
-  - levantar as regras de negócio que o negócio quer
-  - publicar o backlog no Jira
-  - priorizar as capacidades do produto
-  - preparar o material de discovery para a PO
-  - gerar épicos e histórias a partir da entrevista
-  - texto: escrever a spec técnica da jornada
-    negativa: true
-  - texto: mapear as regras que existem no código legado
-    negativa: true
+  - "transformar a transcrição da reunião em backlog"
+  - "fazer o discovery com o cliente e levantar requisitos"
+  - "escrever as histórias de usuário com critérios de aceite"
+  - "levantar as regras de negócio que o negócio quer"
+  - "publicar o backlog no Jira"
+  - "priorizar as capacidades do produto"
+  - "preparar o material de discovery para a PO"
+  - "gerar épicos e histórias a partir da entrevista"
+  - "tenho a gravação da reunião com o cliente, vira backlog"
+  - "monta o roteiro de entrevista para a próxima conversa"
+  - "quais perguntas em aberto ficaram do discovery"
+  - "cria as histórias no Jira a partir do backlog aprovado"
+  - "escreve os critérios de aceite em Dado Quando Então"
+  - "organiza os requisitos por capacidade"
+  - "gera o protótipo para validar com a PO"
+  - "revisa o backlog antes de publicar"
+  - { texto: "escrever a spec técnica da jornada", negativa: true }
+  - { texto: "mapear as regras que existem no código legado", negativa: true }
+  - { texto: "construir a capacidade na sandbox", negativa: true }
+  - { texto: "testar a tela no navegador", negativa: true }
 perfis_sugeridos:
   - po
 proximo:
