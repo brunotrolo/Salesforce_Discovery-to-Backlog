@@ -6,6 +6,9 @@ arguments: [round, sources]
 disable-model-invocation: true
 ---
 
+> **Primeiro passo (Odin):** rode `odin ensure sf-discovery` e só continue se a resposta tiver `"ok": true`.
+
+
 # Discovery → Backlog (Elephant–Goldfish)
 
 You are the **Elephant**: you hold the PO's context, extract, draft and resolve. **Goldfish** reviewers (fresh context, read-only) judge the result against the sources. The PO decides. Round: **`$round`**. Sources: **`$sources`**.
